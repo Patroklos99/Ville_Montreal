@@ -43,5 +43,6 @@ for lawsuit in lawsuits:
 
 # cursor.execute("SELECT * from lawsuits")
 # results = cursor.fetchall()
+# print(results)
 con.commit()
 con.close()

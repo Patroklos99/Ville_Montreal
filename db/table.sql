@@ -1,6 +1,6 @@
 CREATE TABLE lawsuits
 (
-    id_poursuite  INTEGER,
+    id_poursuite  INTEGER PRIMARY KEY ,
     buisness_id   INTEGER,
     date          TEXT,
     description   TEXT,
