@@ -23,34 +23,36 @@ def handle_search():
         search_input = request.form.get('search-input')
 
         if search_criteria == "establishment-name":
-            return redirect(f"/etablissement/{search_input}")
+            return redirect(f"/etablissements/{search_input}")
         elif search_criteria == "owner-name":
-            return redirect(f"/owner-name/{search_input}")
+            return redirect(f"/proprietaires/{search_input}")
         elif search_criteria == "street-name":
-            return redirect(f"/street-name/{search_input}")
+            return redirect(f"/rues/{search_input}")
         else:
             return "Invalid search criteria"
 
 
 # Handle invalid search criteria
 
-@app.route("/etablissement/<nom_etablissement>", methods=["GET"])
-def get_etablissement(nom_etablissement):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{nom_etablissement}%')).all()
+@app.route("/etablissements/<etablissement>", methods=["GET"])
+def get_etablissements(etablissement):
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
     if results:
         return jsonify([result.to_dict() for result in results])
     else:
         return jsonify({"error": "No result found"}), 404
 
 
-@app.route("/owner-name/<search_input>", methods=["GET"])
-def handle_owner_name(search_input):
-    # Handle owner name search
-    return "Owner name search results"
+@app.route("/proprietaires/<proprietaire>", methods=["GET"])
+def get_proprietaires(proprietaire):
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
+    if results:
+        return jsonify([result.to_dict() for result in results])
+    else:
+        return jsonify({"error": "No result found"}), 404
 
-
-@app.route("/street-name/<search_input>", methods=["GET"])
-def handle_street_name(search_input):
+@app.route("/rues/<rue>", methods=["GET"])
+def get_rues(search_input):
     # Handle street name search
     return "Street name search results"
 
