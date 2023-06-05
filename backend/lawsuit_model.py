@@ -1,6 +1,4 @@
-from datetime import datetime
 from app import db
-
 
 class Lawsuit(db.Model):
     __tablename__ = 'lawsuits'
@@ -21,3 +19,6 @@ class Lawsuit(db.Model):
 
     def __repr__(self):
         return f"<Lawsuit {self.id_poursuite}>"
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
