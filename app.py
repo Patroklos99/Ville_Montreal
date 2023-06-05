@@ -5,6 +5,8 @@ from backend.database import db
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{"/home/wallaby/IdeaProjects/Ville_Montreal/db/database.db"}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['JSON_AS_ASCII'] = False
 db.init_app(app)
 
 with app.app_context():
@@ -38,27 +40,27 @@ def handle_search():
 def get_etablissements(etablissement):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
     if results:
-        return jsonify([result.to_dict() for result in results])
+        return render_template("Frontend/results.html", results=results)
     else:
-        return jsonify({"error": "No result found"}), 404
+        return render_template("not_found.html")
 
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
     if results:
-        return jsonify([result.to_dict() for result in results])
+        return render_template("Frontend/results.html", results=results)
     else:
-        return jsonify({"error": "No result found"}), 404
+        return render_template("not_found.html")
 
 
 @app.route("/adresses/<adresse>", methods=["GET"])
 def get_rues(adresse):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
-    if results:
-        return jsonify([result.to_dict() for result in results])
-    else :
-        return jsonify({"error": "No result found"}), 404
+    # if results:
+    return render_template("Frontend/results.html", results=results)
+# else:
+#     return render_template("not_found.html")
 
 
 if __name__ == '__main__':

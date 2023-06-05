@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+<h1>Search Results</h1>
+
+{% if results %}
+<ul>
+    {% for result in results %}
+    <li>
+        ID: {{ result.id_poursuite }}<br>
+        Business ID: {{ result.buisness_id }}<br>
+        Date: {{ result.date }}<br>
+        Description: {{ result.description }}<br>
+        Adresse: {{ result.adresse }}<br>
+        Date Jugement: {{ result.date_jugement }}<br>
+        Etablissement: {{ result.etablissement }}<br>
+        Montant: {{ result.montant }}<br>
+        Proprietaire: {{ result.proprietaire }}<br>
+        Ville: {{ result.ville }}<br>
+        Statut: {{ result.statut }}<br>
+        Date Statut: {{ result.date_statut }}<br>
+        Categorie: {{ result.categorie }}<br>
+    </li>
+    <br>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No results found.</p>
+{% endif %}
+
+</body>
+</html>
+

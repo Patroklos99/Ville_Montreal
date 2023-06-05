@@ -1,5 +1,6 @@
 from app import db
 
+
 class Lawsuit(db.Model):
     __tablename__ = 'lawsuits'
 

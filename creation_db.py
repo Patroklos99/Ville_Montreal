@@ -5,7 +5,8 @@ import requests
 url = 'https://data.montreal.ca/dataset/05a9e718-6810-4e73-8bb9-5955efeb91a0/resource/7f939a08-be8a-45e1-b208' \
       '-d8744dca8fc6/download/violations.csv'
 response = requests.get(url)
-lawsuits = csv.DictReader(response.text.splitlines())
+content = response.content.decode('utf-8')
+lawsuits = csv.DictReader(content.splitlines())
 
 # Connection to db(db will be created if doesnt exist)
 con = sqlite3.connect('db/database.db')
