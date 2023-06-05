@@ -27,7 +27,7 @@ def handle_search():
         elif search_criteria == "owner-name":
             return redirect(f"/proprietaires/{search_input}")
         elif search_criteria == "street-name":
-            return redirect(f"/rues/{search_input}")
+            return redirect(f"/adresses/{search_input}")
         else:
             return "Invalid search criteria"
 
@@ -51,10 +51,14 @@ def get_proprietaires(proprietaire):
     else:
         return jsonify({"error": "No result found"}), 404
 
-@app.route("/rues/<rue>", methods=["GET"])
-def get_rues(search_input):
-    # Handle street name search
-    return "Street name search results"
+
+@app.route("/adresses/<adresse>", methods=["GET"])
+def get_rues(adresse):
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
+    if results:
+        return jsonify([result.to_dict() for result in results])
+    else :
+        return jsonify({"error": "No result found"}), 404
 
 
 if __name__ == '__main__':
