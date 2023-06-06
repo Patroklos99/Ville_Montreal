@@ -38,29 +38,22 @@ def handle_search():
 
 @app.route("/etablissements/<etablissement>", methods=["GET"])
 def get_etablissements(etablissement):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-    if results:
-        return render_template("Frontend/results.html", results=results)
-    else:
-        return render_template("not_found.html")
+    # results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
+    results = db.session.get(lawsuit_model.Lawsuit.etablissement == etablissement)
+    print(results)
+    return render_template("Frontend/results.html", results=results)
 
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
-    if results:
-        return render_template("Frontend/results.html", results=results)
-    else:
-        return render_template("not_found.html")
+    return render_template("Frontend/results.html", results=results)
 
 
 @app.route("/adresses/<adresse>", methods=["GET"])
 def get_rues(adresse):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
-    # if results:
     return render_template("Frontend/results.html", results=results)
-# else:
-#     return render_template("not_found.html")
 
 
 if __name__ == '__main__':
