@@ -62,6 +62,20 @@ def get_rues(adresse):
     return render_template("Frontend/results.html", results=results)
 
 
+@app.route("/contrevenants", methods=["GET"])
+def get_contrevenants():
+    date_debut = request.args.get("du")
+    date_fin = request.args.get("au")
+
+    # Filtrer les contraventions entre les deux dates spécifiées
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.date.between(date_debut, date_fin)).all()
+
+    # Convertir les résultats en liste de dictionnaires
+    result = [lawsuit.to_dict() for lawsuit in results]
+
+    return jsonify(result)
+
+
 def job_schedule():
     # Create a scheduler instance
     scheduler = BackgroundScheduler()
