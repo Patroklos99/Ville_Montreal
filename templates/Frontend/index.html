@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Lawsuits</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-
 </head>
 <body>
 <h1>Lawsuits</h1>
 
-<form method="POST" action="{{ url_for('handle_search') }}">
+<form id="searchForm">
     <div class="search-option">
         <label for="search-criteria">Search by:</label>
         <select id="search-criteria" name="search-criteria">
@@ -22,5 +21,8 @@
     </div>
 </form>
 
+<div id="resultsContainer"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ api.title }}</title>
+</head>
+<body>
+<h1>{{ api.title }}</h1>
+
+<!-- Display API information -->
+<h2>{{ api.baseUri }}</h2>
+
+<!-- Display endpoints and methods -->
+<h3>Endpoints</h3>
+{% for resource, resource_data in api.items() if not resource.startswith(('#','%')) %}
+<h4>{{ resource }}</h4>
+{% for method, method_data in resource_data.items() %}
+<h5>Method: {{ method.upper() }}</h5>
+<p>Description: {{ method_data.description }}</p>
+{% if 'uriParameters' in method_data %}
+<p>URI Parameters:</p>
+<ul>
+    {% for param, param_data in method_data.uriParameters.items() %}
+    <li>{{ param }}: {{ param_data.description }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if 'queryParameters' in method_data %}
+<p>Query Parameters:</p>
+<ul>
+    {% for param, param_data in method_data.queryParameters.items() %}
+    <li>{{ param }}: {{ param_data.description }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endfor %}
+{% endfor %}
+</body>
+</html>

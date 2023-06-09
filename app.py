@@ -3,12 +3,35 @@ import datetime
 
 import requests
 from flask import Flask, request, redirect, render_template, jsonify
+from flask_restx import Api, Resource
 from backend import lawsuit_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
+API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
+
+# Call factory function to create our blueprint
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    API_URL,
+    config={  # Swagger UI config overrides
+        'app_name': "Test application"
+    },
+    # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
+    #    'clientId': "your-client-id",
+    #    'clientSecret': "your-client-secret-if-required",
+    #    'realm': "your-realms",
+    #    'appName': "your-app-name",
+    #    'scopeSeparator': " ",
+    #    'additionalQueryStringParams': {'test': "hello"}
+    # }
+)
+
+app.register_blueprint(swaggerui_blueprint)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{"/home/wallaby/IdeaProjects/Ville_Montreal/db/database.db"}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -27,8 +50,9 @@ def home():
 @app.route("/handle_search", methods=['GET', 'POST'])
 def handle_search():
     if request.method == 'POST':
-        search_criteria = request.form.get('search-criteria')
-        search_input = request.form.get('search-input')
+        search_data = request.get_json()
+        search_criteria = search_data.get('searchCriteria')
+        search_input = search_data.get('searchInput')
 
         if search_criteria == "establishment-name":
             return redirect(f"/etablissements/{search_input}")
@@ -42,13 +66,16 @@ def handle_search():
 
 # Handle invalid search criteria
 
+# @app.route("/api/etablissements/<etablissement>", methods=["GET"])
+# def get_etablissements(etablissement):
+#     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
+#     print(results)
+#     return render_template("Frontend/results.html", results=results)
 @app.route("/etablissements/<etablissement>", methods=["GET"])
 def get_etablissements(etablissement):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-    # results = db.session.get(lawsuit_model.Lawsuit.etablissement == etablissement)
-    print(results)
-    return render_template("Frontend/results.html", results=results)
-
+    serialized_results = [lawsuit.to_dict() for lawsuit in results]
+    return jsonify(serialized_results)
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
@@ -141,3 +168,88 @@ def update_db():
 if __name__ == '__main__':
     job_schedule()
     app.run()
+
+# from flask import Flask
+# from flask_restx import Api, Resource, fields
+#
+# app = Flask(__name__)
+# api = Api(app, version='1.0', title='TodoMVC API',
+#           description='Description here',
+#           )
+#
+# ns = api.namespace('Animals', description='Animal operations')
+#
+# animal = api.model('Animals', {
+#     'id': fields.Integer(readonly=True, description='The task unique identifier'),
+# })
+#
+#
+# class TodoDAO(object):
+#     def __init__(self):
+#         self.counter = 0
+#         self.todos = []
+#
+#     def get(self, id):
+#         for todo in self.todos:
+#             if todo['id'] == id:
+#                 return todo
+#         api.abort(404, "Todo {} doesn't exist".format(id))
+#
+#     def create(self, data):
+#         todo = data
+#         todo['id'] = self.counter = self.counter + 1
+#         self.todos.append(todo)
+#         return todo
+#
+#     def update(self, id, data):
+#         todo = self.get(id)
+#         todo.update(data)
+#         return todo
+#
+#     def delete(self, id):
+#         todo = self.get(id)
+#         self.todos.remove(todo)
+#
+#
+# DAO = TodoDAO()
+#
+#
+# @ns.route('/')
+# class TodoList(Resource):
+#     @ns.marshal_list_with(animal)
+#     def get(self):
+#         '''List all tasks'''
+#         return DAO.todos
+#
+#     @ns.expect(animal)
+#     @ns.marshal_with(animal, code=201)
+#     def post(self):
+#         '''Create a new task'''
+#         return DAO.create(api.payload), 201
+#
+#
+# @ns.route('/<int:id>')
+# @ns.response(404, 'Todo not found')
+# @ns.param('id', 'The task identifier')
+# class Todo(Resource):
+#     '''Show a single todo item and lets you delete them'''
+#     @ns.marshal_with(animal)
+#     def get(self, id):
+#         '''Fetch a given resource'''
+#         return DAO.get(id)
+#
+#     @ns.response(204, 'Todo deleted')
+#     def delete(self, id):
+#         '''Delete a task given its identifier'''
+#         DAO.delete(id)
+#         return '', 204
+#
+#     @ns.expect(animal)
+#     @ns.marshal_with(animal)
+#     def put(self, id):
+#         '''Update a task given its identifier'''
+#         return DAO.update(id, api.payload)
+#
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)
