@@ -2,3 +2,5 @@
 /.idea/
 /identifier.sqlite
 /db/database.db
+*.pyc
+/__pycache__/app.cpython-310.pyc
