@@ -50,9 +50,9 @@ def home():
 @app.route("/handle_search", methods=['GET', 'POST'])
 def handle_search():
     if request.method == 'POST':
-        search_data = request.get_json()
-        search_criteria = search_data.get('searchCriteria')
-        search_input = search_data.get('searchInput')
+        search_data = request
+        search_criteria = search_data.form.get('search-criteria')
+        search_input = search_data.form.get('search-input')
 
         if search_criteria == "establishment-name":
             return redirect(f"/etablissements/{search_input}")
@@ -65,22 +65,27 @@ def handle_search():
 
 
 # Handle invalid search criteria
-
-# @app.route("/api/etablissements/<etablissement>", methods=["GET"])
-# def get_etablissements(etablissement):
-#     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-#     print(results)
-#     return render_template("Frontend/results.html", results=results)
 @app.route("/etablissements/<etablissement>", methods=["GET"])
 def get_etablissements(etablissement):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-    serialized_results = [lawsuit.to_dict() for lawsuit in results]
-    return jsonify(serialized_results)
+    print(results)
+    return render_template("Frontend/results.html", results=results)
+
+
+# Single Page App return of json
+# @app.route("/etablissements/<etablissement>", methods=["GET"])
+# def get_etablissements(etablissement):
+#     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
+#     serialized_results = [lawsuit.to_dict() for lawsuit in results]
+#     return jsonify(serialized_results)
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
-    return render_template("Frontend/results.html", results=results)
+    if results:
+        return render_template("Frontend/results.html", results=results)
+    else:
+        return render_template("not_found.html")
 
 
 @app.route("/adresses/<adresse>", methods=["GET"])

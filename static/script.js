@@ -7,7 +7,6 @@ async function fetchData(searchCriteria, searchInput) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({searchCriteria, searchInput}),
-            redirect: 'follow'
         });
 
         if (response.ok) {
