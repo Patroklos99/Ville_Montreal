@@ -119,7 +119,6 @@ function handleResponseData(responseData) {
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
 const resultsTable = document.getElementById('resultsTable');
-const rechercherButton = document.querySelector('#searchFormDate button[type="submit"]');
 let isResultsTableVisible = true;
 
 function handleSearchFormDateSubmit(event) {
@@ -140,13 +139,6 @@ function handleSearchFormDateSubmit(event) {
 // });
 
 searchFormD.addEventListener('submit', handleSearchFormDateSubmit);
-
-rechercherButton.addEventListener('click', (event) => {
-    if (!isResultsTableVisible) {
-        resultsTable.style.display = 'block';
-        isResultsTableVisible = true;
-    }
-});
 
 closeButton.addEventListener('click', (event) => {
     debugger
