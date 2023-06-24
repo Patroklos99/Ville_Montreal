@@ -94,10 +94,10 @@ def get_rues(adresse):
     return render_template("Frontend/results.html", results=results)
 
 
-@app.route("/contrevenants", methods=["GET"])
+@app.route("/contrevenants", methods=["GET", "POST"])
 def get_contrevenants():
-    date_debut = request.args.get("du")
-    date_fin = request.args.get("au")
+    date_debut = request.json.get("date1")
+    date_fin = request.json.get("date2")
 
     # Filtrer les contraventions entre les deux dates spécifiées
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.date.between(date_debut, date_fin)).all()

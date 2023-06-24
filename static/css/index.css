@@ -28,10 +28,14 @@ label {
     margin-left: 10px;
 }
 
+#searchTitle {
+    text-align: center;
+}
+
 button[type="submit"] {
     padding: 5px 10px;
     font-size: 16px;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     border: none;
     border-radius: 4px;
@@ -41,4 +45,14 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     background-color: #45a049;
+}
+
+.closeButton {
+    cursor: pointer;
+    font-size: 16px;
+}
+#parentContainer {
+    display: block;
+    align-items: center;
+    margin-left: 10px;
 }

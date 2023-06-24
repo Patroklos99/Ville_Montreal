@@ -8,7 +8,7 @@
 <body>
 <h1>Lawsuits</h1>
 
-<form method="POST" action="{{ url_for('handle_search') }}">
+<form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
     <div class="search-option">
         <label for="search-criteria">Search by:</label>
         <select id="search-criteria" name="search-criteria">
@@ -19,8 +19,29 @@
         <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
         <button type="submit">Search</button>
     </div>
-    </form>
+</form>
 <div id="resultsContainer"></div>
+
+<h1 id="searchTitle">Formulaire de recherche rapide</h1>
+<div class="container">
+    <form id="searchFormDate">
+        <div class="search-option">
+            <label for="date1">Date 1:</label>
+            <input type="date" id="date1" name="date1">
+        </div>
+        <div class="search-option">
+            <label for="date2">Date 2:</label>
+            <input type="date" id="date2" name="date2">
+        </div>
+        <div class="search-option">
+            <button type="submit">Rechercher</button>
+            <div id="parentContainer">
+                <button id="closeButton" class="closeButton">Close</button>
+            </div>
+        </div>
+    </form>
+    <div id="resultsTable"></div>
+</div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
