@@ -108,6 +108,8 @@ def get_contrevenants():
     return jsonify(result)
 
 
+
+
 def job_schedule():
     # Create a scheduler instance
     scheduler = BackgroundScheduler()

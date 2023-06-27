@@ -33,16 +33,25 @@
             <label for="date2">Date 2:</label>
             <input type="date" id="date2" name="date2">
         </div>
+        <div class="rolling-list">
+            <select id="restaurant-list">
+                <option value="">Select a restaurant</option>
+                <!-- Options will be dynamically added here -->
+            </select>
+        </div>
         <div class="search-option">
             <button type="submit">Rechercher</button>
             <div id="parentContainer">
                 <button id="closeButton" class="closeButton">Close</button>
             </div>
         </div>
+
+
     </form>
     <div id="resultsTable"></div>
 </div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='rolling_list.js') }}"></script>
 </body>
 </html>

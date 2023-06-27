@@ -119,6 +119,7 @@ function handleResponseData(responseData) {
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
 const resultsTable = document.getElementById('resultsTable');
+const restaurantList = document.getElementById('restaurant-list');
 let isResultsTableVisible = true;
 
 function handleSearchFormDateSubmit(event) {
@@ -126,9 +127,14 @@ function handleSearchFormDateSubmit(event) {
     event.preventDefault();
     const date1 = document.getElementById('date1').value;
     const date2 = document.getElementById('date2').value;
-    fetchDataForDate(date1, date2);
-    resultsTable.style.display = 'block';
-    isResultsTableVisible = true;
+    const selectedRestaurantValue = restaurantList.value;
+    if (restaurantList) {
+        fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue);
+    } else {
+        fetchDataForDate(date1, date2);
+        resultsTable.style.display = 'block';
+        isResultsTableVisible = true;
+    }
 }
 
 // searchForm.addEventListener('submit', (event) => {
