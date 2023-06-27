@@ -47,53 +47,59 @@ function handleResponseData(responseData) {
         }
     });
 
-    // Iterate over the contraventionCounts and create table rows
-    contraventionCounts.forEach((count, establishment) => {
+    // Sort the establishment names in alphabetical order
+    const establishments = Array.from(contraventionCounts.keys()).sort();
+
+    // Iterate over the sorted establishment names and create table rows
+    establishments.forEach(establishment => {
+        const count = contraventionCounts.get(establishment);
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
-      <td>${establishment}</td>
-      <td>${count}</td>
-    `;
+          <td>${establishment}</td>
+          <td>${count}</td>
+        `;
         resultsTable.appendChild(tableRow);
     });
 }
 
-function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
-  const requestData = {
-    date1: date1,
-    date2: date2,
-    restaurant: selectedRestaurantValue
-  };
 
-  fetch('/contrevenants-restaurant', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestData)
-  })
-  .then(response => response.json())
-  .then(data => handleDataForDateRestaurantResponse(data))
-  .catch(error => {
-    console.error('Error:', error);
-  });
+function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
+    debugger
+    const requestData = {
+        date1: date1,
+        date2: date2,
+        restaurant: selectedRestaurantValue
+    };
+
+    fetch('/contrevenants-restaurant', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+        .then(response => response.json())
+        .then(data => handleDataForDateRestaurantResponse(data))
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function handleDataForDateRestaurantResponse(response) {
     // Handle the response data
     console.log("Response data:", response);
 
-    // Get the list element to display the descriptions
-    const descriptionsList = document.getElementById("descriptions-list");
+    const resultsTable = document.getElementById("resultsTable");
 
-    // Clear any existing content
-    descriptionsList.innerHTML = "";
+    resultsTable.innerHTML = '';
 
-    // Iterate over the response data and create list items for each description
-    response.forEach(item => {
-        const listItem = document.createElement("li");
-        listItem.textContent = item.description;
-        descriptionsList.appendChild(listItem);
+    // Iterate over the response data and create table rows for each description
+    response.forEach(description => {
+        const tableRow = document.createElement('tr');
+        tableRow.innerHTML = `
+      <td>${description}</td>
+    `;
+        resultsTable.appendChild(tableRow);
     });
 }
 
@@ -110,7 +116,7 @@ function handleSearchFormDateSubmit(event) {
     const date1 = document.getElementById('date1').value;
     const date2 = document.getElementById('date2').value;
     const selectedRestaurantValue = restaurantList.value;
-    if (restaurantList) {
+    if (selectedRestaurantValue) {
         fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue);
     } else {
         fetchDataForDate(date1, date2);
@@ -118,13 +124,6 @@ function handleSearchFormDateSubmit(event) {
         isResultsTableVisible = true;
     }
 }
-
-// searchForm.addEventListener('submit', (event) => {
-//     event.preventDefault();
-//     const searchCriteria = document.getElementById('search-criteria').value;
-//     const searchInput = document.getElementById('search-input').value;
-//     fetchData(searchCriteria, searchInput);
-// });
 
 searchFormD.addEventListener('submit', handleSearchFormDateSubmit);
 

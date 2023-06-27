@@ -107,6 +107,7 @@ def get_contrevenants():
 
     return jsonify(result)
 
+
 @app.route("/contrevenants-restaurant", methods=["POST"])
 def get_contrevenants_restaurant():
     date_debut = request.json.get("date1")
@@ -115,7 +116,7 @@ def get_contrevenants_restaurant():
 
     # Filtrer les contraventions du restaurant entre les deux dates spécifiées
     results = lawsuit_model.Lawsuit.query.filter(
-        lawsuit_model.Lawsuit.restaurant == restaurant,
+        lawsuit_model.Lawsuit.etablissement == restaurant,
         lawsuit_model.Lawsuit.date.between(date_debut, date_fin)
     ).all()
 
