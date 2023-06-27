@@ -79,6 +79,24 @@ function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
   });
 }
 
+function handleDataForDateRestaurantResponse(response) {
+    // Handle the response data
+    console.log("Response data:", response);
+
+    // Get the list element to display the descriptions
+    const descriptionsList = document.getElementById("descriptions-list");
+
+    // Clear any existing content
+    descriptionsList.innerHTML = "";
+
+    // Iterate over the response data and create list items for each description
+    response.forEach(item => {
+        const listItem = document.createElement("li");
+        listItem.textContent = item.description;
+        descriptionsList.appendChild(listItem);
+    });
+}
+
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
