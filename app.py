@@ -107,7 +107,22 @@ def get_contrevenants():
 
     return jsonify(result)
 
+@app.route("/contrevenants-restaurant", methods=["POST"])
+def get_contrevenants_restaurant():
+    date_debut = request.json.get("date1")
+    date_fin = request.json.get("date2")
+    restaurant = request.json.get("restaurant")
 
+    # Filtrer les contraventions du restaurant entre les deux dates spécifiées
+    results = lawsuit_model.Lawsuit.query.filter(
+        lawsuit_model.Lawsuit.restaurant == restaurant,
+        lawsuit_model.Lawsuit.date.between(date_debut, date_fin)
+    ).all()
+
+    # Obtenir uniquement les descriptions des contraventions
+    descriptions = [lawsuit.description for lawsuit in results]
+
+    return jsonify(descriptions)
 
 
 def job_schedule():
