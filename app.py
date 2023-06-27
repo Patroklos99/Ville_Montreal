@@ -146,11 +146,16 @@ def update_db():
     response = requests.get(url)
     content = response.content.decode('utf-8')
     _lawsuits = csv.DictReader(content.splitlines())
+    new_violations = []
 
     # Update or insert records in the database
     with app.app_context():
         for lawsuit in _lawsuits:
             id_poursuite = lawsuit['id_poursuite']
+
+            existing_record = lawsuit_model.Lawsuit.query.filter_by(id_poursuite=id_poursuite).first()
+            if not existing_record:
+                new_violations.append(lawsuit)
 
             new_record = lawsuit_model.Lawsuit(
                 id_poursuite=id_poursuite,
@@ -169,8 +174,40 @@ def update_db():
             )
             db.session.add(new_record)
 
+        # Send email with the list of new violations
+    if new_violations:
+        email_recipient = get_email_recipient()
+        email_subject = 'New Violations Detected'
+        email_body = '\n'.join([f'- {violation["description"]}' for violation in new_violations])
+
+        send_email(email_recipient, email_subject, email_body)
     # Commit the changes to the database
     db.session.commit()
+
+
+def send_email(recipient, subject, body):
+    # Email configuration
+    sender = 'test@gmail.com'
+    smtp_server = 'smtp.example.com'
+    smtp_port = 587
+    smtp_username = 'your_username'
+    smtp_password = 'your_password'
+
+    # Create a multipart message
+    message = MIMEMultipart()
+    message['From'] = sender
+    message['To'] = recipient
+    message['Subject'] = subject
+
+    # Attach the email body as plain text
+    message.attach(MIMEText(body, 'plain'))
+
+    # Send the email
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(message)
+        server.quit()
 
 
 def get_email_recipient():
