@@ -93,15 +93,23 @@ function handleDataForDateRestaurantResponse(response) {
 
     resultsTable.innerHTML = '';
 
-    // Iterate over the response data and create table rows for each description
-    response.forEach(description => {
-        const tableRow = document.createElement('tr');
-        tableRow.innerHTML = `
-      <td>${description}</td>
-    `;
-        resultsTable.appendChild(tableRow);
-    });
+    // Get the establishment name (assuming it's the same for all items)
+    const establishment = response[0].etablissement;
+
+    // Create the table row for the establishment
+    const tableRow = document.createElement('tr');
+    tableRow.innerHTML = `
+    <td>
+      <strong>Etablissement:</strong> ${establishment}<br><br>
+      <ul>
+        ${response.map(item => `<li><strong>Date </strong>(${item.date}) :<br> ${item.description}</li><br>`).join('')}
+      </ul>
+    </td>
+  `;
+
+    resultsTable.appendChild(tableRow);
 }
+
 
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');

@@ -121,7 +121,7 @@ def get_contrevenants_restaurant():
     ).all()
 
     # Obtenir uniquement les descriptions des contraventions
-    descriptions = [lawsuit.description for lawsuit in results]
+    descriptions = [lawsuit.to_dict() for lawsuit in results]
 
     return jsonify(descriptions)
 
