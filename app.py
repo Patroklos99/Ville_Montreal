@@ -1,5 +1,4 @@
 import csv
-import datetime
 
 import requests
 import yaml
@@ -12,6 +11,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from twitter_config import api_twitter
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
