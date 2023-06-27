@@ -1,11 +1,9 @@
 import csv
-import datetime
-
 import requests
 import yaml
 import smtplib
+
 from flask import Flask, request, redirect, render_template, jsonify
-from flask_restx import Api, Resource
 from backend import lawsuit_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -76,13 +74,6 @@ def get_etablissements(etablissement):
     return render_template("Frontend/results.html", results=results)
 
 
-# Single Page App return of json
-# @app.route("/etablissements/<etablissement>", methods=["GET"])
-# def get_etablissements(etablissement):
-#     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-#     serialized_results = [lawsuit.to_dict() for lawsuit in results]
-#     return jsonify(serialized_results)
-
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
     results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
@@ -128,6 +119,23 @@ def get_contrevenants_restaurant():
     descriptions = [lawsuit.to_dict() for lawsuit in results]
 
     return jsonify(descriptions)
+
+
+# Return all companies with atleast one infraction in desc order
+@app.route("/etablissements/infractions", methods=["GET"])
+def get_etablissements_infractions():
+    # Effectuer la requête pour obtenir la liste triée des établissements avec le nombre d'infractions
+    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+        .group_by(lawsuit_model.Lawsuit.etablissement) \
+        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+        .all()
+
+    # Convertir les résultats en liste de dictionnaires
+    result = [{"etablissement": etablissement, "nombre_infractions": nombre_infractions} for
+              etablissement, nombre_infractions in results]
+
+    return jsonify(result)
 
 
 def job_schedule():
