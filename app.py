@@ -2,12 +2,16 @@ import csv
 import datetime
 
 import requests
+import yaml
+import smtplib
 from flask import Flask, request, redirect, render_template, jsonify
 from flask_restx import Api, Resource
 from backend import lawsuit_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
@@ -148,131 +152,33 @@ def update_db():
         for lawsuit in _lawsuits:
             id_poursuite = lawsuit['id_poursuite']
 
-            # Check if a record with the same id_poursuite exists in the database
-            existing_record = lawsuit_model.Lawsuit.query.filter_by(id_poursuite=id_poursuite).first()
+            new_record = lawsuit_model.Lawsuit(
+                id_poursuite=id_poursuite,
+                buisness_id=lawsuit['business_id'],
+                date=lawsuit['date'],
+                description=lawsuit['description'],
+                adresse=lawsuit['adresse'],
+                date_jugement=lawsuit['date_jugement'],
+                etablissement=lawsuit['etablissement'],
+                montant=lawsuit['montant'],
+                proprietaire=lawsuit['proprietaire'],
+                ville=lawsuit['ville'],
+                statut=lawsuit['statut'],
+                date_statut=lawsuit['date_statut'],
+                categorie=lawsuit['categorie']
+            )
+            db.session.add(new_record)
 
-            if existing_record:
-                # If a record exists, update the fields with the new values from the CSV file
-                existing_record.buisness_id = lawsuit['business_id']
-                existing_record.date = lawsuit['date']
-                existing_record.description = lawsuit['description']
-                existing_record.adresse = lawsuit['adresse']
-                existing_record.date_jugement = lawsuit['date_jugement']
-                existing_record.etablissement = lawsuit['etablissement']
-                existing_record.montant = lawsuit['montant']
-                existing_record.proprietaire = lawsuit['proprietaire']
-                existing_record.ville = lawsuit['ville']
-                existing_record.statut = lawsuit['statut']
-                existing_record.date_statut = lawsuit['date_statut']
-                existing_record.categorie = lawsuit['categorie']
-            else:
-                # If no record exists, create a new record in the database
-                new_record = lawsuit_model.Lawsuit(
-                    id_poursuite=id_poursuite,
-                    buisness_id=lawsuit['business_id'],
-                    date=lawsuit['date'],
-                    description=lawsuit['description'],
-                    adresse=lawsuit['adresse'],
-                    date_jugement=lawsuit['date_jugement'],
-                    etablissement=lawsuit['etablissement'],
-                    montant=lawsuit['montant'],
-                    proprietaire=lawsuit['proprietaire'],
-                    ville=lawsuit['ville'],
-                    statut=lawsuit['statut'],
-                    date_statut=lawsuit['date_statut'],
-                    categorie=lawsuit['categorie']
-                )
-                db.session.add(new_record)
+    # Commit the changes to the database
+    db.session.commit()
 
-        # Commit the changes to the database
-        db.session.commit()
+
+def get_email_recipient():
+    with open('config.yml', 'r') as config_file:
+        config = yaml.safe_load(config_file)
+        return config['email']['recipient']
 
 
 if __name__ == '__main__':
     job_schedule()
     app.run()
-
-# from flask import Flask
-# from flask_restx import Api, Resource, fields
-#
-# app = Flask(__name__)
-# api = Api(app, version='1.0', title='TodoMVC API',
-#           description='Description here',
-#           )
-#
-# ns = api.namespace('Animals', description='Animal operations')
-#
-# animal = api.model('Animals', {
-#     'id': fields.Integer(readonly=True, description='The task unique identifier'),
-# })
-#
-#
-# class TodoDAO(object):
-#     def __init__(self):
-#         self.counter = 0
-#         self.todos = []
-#
-#     def get(self, id):
-#         for todo in self.todos:
-#             if todo['id'] == id:
-#                 return todo
-#         api.abort(404, "Todo {} doesn't exist".format(id))
-#
-#     def create(self, data):
-#         todo = data
-#         todo['id'] = self.counter = self.counter + 1
-#         self.todos.append(todo)
-#         return todo
-#
-#     def update(self, id, data):
-#         todo = self.get(id)
-#         todo.update(data)
-#         return todo
-#
-#     def delete(self, id):
-#         todo = self.get(id)
-#         self.todos.remove(todo)
-#
-#
-# DAO = TodoDAO()
-#
-#
-# @ns.route('/')
-# class TodoList(Resource):
-#     @ns.marshal_list_with(animal)
-#     def get(self):
-#         '''List all tasks'''
-#         return DAO.todos
-#
-#     @ns.expect(animal)
-#     @ns.marshal_with(animal, code=201)
-#     def post(self):
-#         '''Create a new task'''
-#         return DAO.create(api.payload), 201
-#
-#
-# @ns.route('/<int:id>')
-# @ns.response(404, 'Todo not found')
-# @ns.param('id', 'The task identifier')
-# class Todo(Resource):
-#     '''Show a single todo item and lets you delete them'''
-#     @ns.marshal_with(animal)
-#     def get(self, id):
-#         '''Fetch a given resource'''
-#         return DAO.get(id)
-#
-#     @ns.response(204, 'Todo deleted')
-#     def delete(self, id):
-#         '''Delete a task given its identifier'''
-#         DAO.delete(id)
-#         return '', 204
-#
-#     @ns.expect(animal)
-#     @ns.marshal_with(animal)
-#     def put(self, id):
-#         '''Update a task given its identifier'''
-#         return DAO.update(id, api.payload)
-#
-#
-# if __name__ == '__main__':
-#     app.run(debug=True)
