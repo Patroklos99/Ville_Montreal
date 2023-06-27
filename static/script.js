@@ -1,27 +1,3 @@
-async function fetchData(searchCriteria, searchInput) {
-    debugger
-    try {
-        const response = await fetch('/handle_search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({searchCriteria, searchInput}),
-        });
-
-        if (response.ok) {
-            const responseData = await response.json();
-
-            // Handle the JSON data on the frontend
-            handleResponseData(responseData);
-        } else {
-            console.error("Error occurred during handle_search");
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 async function fetchDataForDate(date1, date2) {
     debugger
     try {
@@ -42,39 +18,6 @@ async function fetchDataForDate(date1, date2) {
         console.error(error);
     }
 }
-
-
-// Function to handle the JSON response data
-// function handleResponseData(responseData) {
-//     // Assuming resultsContainer is the parent element for your list
-//     let resultsContainer = document.getElementById('resultsContainer');
-//
-//     responseData.forEach(item => {
-//         const listItem = document.createElement('li');
-//         const unorderedList = document.createElement('ul');
-//
-//         listItem.innerHTML = `
-//               <li>
-//         ID: ${item.id_poursuite}<br>
-//         Business ID: ${item.buisness_id}<br>
-//         Date: ${item.date}<br>
-//         Description: ${item.description}<br>
-//         Adresse: ${item.adresse}<br>
-//         Date Jugement: ${item.date_jugement}<br>
-//         Etablissement: ${item.etablissement}<br>
-//         Montant: ${item.montant}<br>
-//         Proprietaire: ${item.proprietaire}<br>
-//         Ville: ${item.ville}<br>
-//         Statut: ${item.statut}<br>
-//         Date Statut: ${item.date_statut}<br>
-//         Categorie: ${item.categorie}<br>
-//     </li>
-//         `;
-//
-//         unorderedList.appendChild(listItem);
-//         resultsContainer.appendChild(unorderedList);
-//     });
-// }
 
 function handleResponseData(responseData) {
     // Assuming resultsTable is the table element where the data will be displayed
@@ -113,6 +56,27 @@ function handleResponseData(responseData) {
     `;
         resultsTable.appendChild(tableRow);
     });
+}
+
+function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
+  const requestData = {
+    date1: date1,
+    date2: date2,
+    restaurant: selectedRestaurantValue
+  };
+
+  fetch('/contrevenants-restaurant', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestData)
+  })
+  .then(response => response.json())
+  .then(data => handleDataForDateRestaurantResponse(data))
+  .catch(error => {
+    console.error('Error:', error);
+  });
 }
 
 // const searchForm = document.getElementById('searchForm');
