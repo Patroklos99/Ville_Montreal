@@ -224,6 +224,15 @@ def get_email_recipient():
         return config['email']['recipient']
 
 
+# @app.route('/doc')
+# def documentation():
+#     # Read the RAML file and pass it to the template
+#     raml_f = "api_doc.raml"
+#     with open(raml_f, 'r') as raml_file:
+#         raml_content = raml_file.read()
+#     return render_template('Frontend/api_doc.html', raml_content=raml_content)
+
+
 if __name__ == '__main__':
     job_schedule()
     app.run()

@@ -1,39 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>{{ api.title }}</title>
+    <title>API Documentation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/raml2html/dist/raml2html.min.css">
 </head>
 <body>
-<h1>{{ api.title }}</h1>
+<div id="documentation"></div>
 
-<!-- Display API information -->
-<h2>{{ api.baseUri }}</h2>
+<script src="https://cdn.jsdelivr.net/npm/raml2html/dist/raml2html.min.js"></script>
+<script>
+    // Use AJAX or other means to fetch the RAML content
+    const ramlContent = "{{ raml_content|safe }}";
 
-<!-- Display endpoints and methods -->
-<h3>Endpoints</h3>
-{% for resource, resource_data in api.items() if not resource.startswith(('#','%')) %}
-<h4>{{ resource }}</h4>
-{% for method, method_data in resource_data.items() %}
-<h5>Method: {{ method.upper() }}</h5>
-<p>Description: {{ method_data.description }}</p>
-{% if 'uriParameters' in method_data %}
-<p>URI Parameters:</p>
-<ul>
-    {% for param, param_data in method_data.uriParameters.items() %}
-    <li>{{ param }}: {{ param_data.description }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% if 'queryParameters' in method_data %}
-<p>Query Parameters:</p>
-<ul>
-    {% for param, param_data in method_data.queryParameters.items() %}
-    <li>{{ param }}: {{ param_data.description }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endfor %}
-{% endfor %}
+    // Render the RAML content
+    raml2html.parse(ramlContent, function (err, html) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        // Display the rendered HTML in the documentation div
+        const documentationDiv = document.getElementById('documentation');
+        documentationDiv.innerHTML = html;
+    });
+</script>
 </body>
 </html>
