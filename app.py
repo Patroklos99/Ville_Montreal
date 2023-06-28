@@ -164,6 +164,27 @@ def get_etablissements_infractions_xml():
     return response
 
 
+@app.route("/etablissements/infractionsCSV", methods=["GET"])
+def get_etablissements_infractions_csv():
+    # Perform the query to get the sorted list of establishments with the number of infractions
+    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+        .group_by(lawsuit_model.Lawsuit.etablissement) \
+        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+        .all()
+
+    # Create the CSV content
+    csv_data = "etablissement,nombre_infractions\n"
+    for etablissement, nombre_infractions in results:
+        csv_data += f"{etablissement},{nombre_infractions}\n"
+
+    # Set the response headers
+    headers = {
+        "Content-Disposition": "attachment; filename=etablissements_infractions.csv",
+        "Content-Type": "text/csv; charset=utf-8"
+    }
+
+    return Response(csv_data, headers=headers)
 
 
 def job_schedule():
