@@ -2,8 +2,9 @@ import csv
 import requests
 import yaml
 import smtplib
+import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify
+from flask import Flask, request, redirect, render_template, jsonify, Response
 from backend import lawsuit_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -136,6 +137,33 @@ def get_etablissements_infractions():
               etablissement, nombre_infractions in results]
 
     return jsonify(result)
+
+
+# Return all companies with at least one infraction in descending order
+@app.route("/etablissements/infractionsXML", methods=["GET"])
+def get_etablissements_infractions_xml():
+    # Perform the query to get the sorted list of establishments with the number of infractions
+    results = db.session.query(
+        lawsuit_model.Lawsuit.etablissement,
+        db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")
+    ).group_by(lawsuit_model.Lawsuit.etablissement).order_by(
+        db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()).all()
+
+    # Convert the results to a list of dictionaries
+    result = [
+        {"etablissement": etablissement, "nombre_infractions": nombre_infractions}
+        for etablissement, nombre_infractions in results
+    ]
+
+    # Convert the result to XML format with UTF-8 encoding
+    xml_data = dicttoxml.dicttoxml(result, custom_root="etablissements", attr_type=False, encoding="utf-8")
+
+    # Set the response content type as XML
+    response = Response(response=xml_data, status=200, mimetype="application/xml")
+
+    return response
+
+
 
 
 def job_schedule():
