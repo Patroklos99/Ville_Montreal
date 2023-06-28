@@ -51,6 +51,7 @@ button[type="submit"]:hover {
     cursor: pointer;
     font-size: 16px;
 }
+
 #parentContainer {
     display: block;
     align-items: center;
@@ -79,3 +80,13 @@ li {
     margin-top: 15px;
 }
 
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}

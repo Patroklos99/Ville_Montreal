@@ -12,6 +12,9 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from jsonschema import validate
+from json_schema import inspection_schema
+
 app = Flask(__name__, template_folder='templates', static_folder='static')
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
@@ -280,6 +283,21 @@ def get_email_recipient():
 #     with open(raml_f, 'r') as raml_file:
 #         raml_content = raml_file.read()
 #     return render_template('Frontend/api_doc.html', raml_content=raml_content)
+
+
+@app.route("/demande-inspection", methods=["POST", "GET"])
+def create_inspection_request():
+    data = request.get_json()
+
+    # Validate the JSON data against the schema
+    try:
+        validate(data, inspection_schema)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    # Process the inspection request and return a response (implementation logic)
+
+    return jsonify({"message": "Inspection request created successfully"})
 
 
 if __name__ == '__main__':

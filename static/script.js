@@ -1,23 +1,24 @@
 async function fetchDataForDate(date1, date2) {
-    debugger
     try {
         const response = await fetch('/contrevenants', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({date1, date2}),
+            body: JSON.stringify({ date1, date2 }),
         });
+
         if (response.ok) {
             const responseData = await response.json();
             handleResponseData(responseData);
         } else {
-            console.error("Error occured during Date /contrevenants")
+            console.log('Error occurred during Date /contrevenants');
         }
     } catch (error) {
-        console.error(error);
+        console.error('Error', error);
     }
 }
+
 
 function handleResponseData(responseData) {
     // Assuming resultsTable is the table element where the data will be displayed
@@ -62,8 +63,7 @@ function handleResponseData(responseData) {
     });
 }
 
-
-function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
+async function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
     debugger
     const requestData = {
         date1: date1,
@@ -71,18 +71,24 @@ function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
         restaurant: selectedRestaurantValue
     };
 
-    fetch('/contrevenants-restaurant', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-    })
-        .then(response => response.json())
-        .then(data => handleDataForDateRestaurantResponse(data))
-        .catch(error => {
-            console.error('Error:', error);
+    try {
+        const response = await fetch('/contrevenants-restaurant', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            handleDataForDateRestaurantResponse(data);
+        } else {
+            console.log('Error during /contrevenants-restaurant request');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 function handleDataForDateRestaurantResponse(response) {
@@ -110,7 +116,6 @@ function handleDataForDateRestaurantResponse(response) {
     resultsTable.appendChild(tableRow);
 }
 
-
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
@@ -118,7 +123,7 @@ const resultsTable = document.getElementById('resultsTable');
 const restaurantList = document.getElementById('restaurant-list');
 let isResultsTableVisible = true;
 
-function handleSearchFormDateSubmit(event) {
+searchFormD.addEventListener('submit', (event) => {
     debugger
     event.preventDefault();
     const date1 = document.getElementById('date1').value;
@@ -131,9 +136,9 @@ function handleSearchFormDateSubmit(event) {
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
     }
-}
+});
 
-searchFormD.addEventListener('submit', handleSearchFormDateSubmit);
+
 
 closeButton.addEventListener('click', (event) => {
     debugger
