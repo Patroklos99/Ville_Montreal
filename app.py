@@ -300,6 +300,13 @@ def create_inspection_request():
     return jsonify({"message": "Inspection request created successfully"})
 
 
+@app.route("/inspection-requests/<id>", methods=["DELETE"])
+def delete_inspection_request(id):
+    # Perform the deletion logic based on the provided ID
+    # If the deletion is successful, return a response indicating success
+    return jsonify({"message": f"Inspection request with ID {id} deleted successfully"})
+
+
 if __name__ == '__main__':
     job_schedule()
     app.run()
