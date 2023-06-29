@@ -5,7 +5,7 @@ async function fetchDataForDate(date1, date2) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ date1, date2 }),
+            body: JSON.stringify({date1, date2}),
         });
 
         if (response.ok) {
@@ -136,8 +136,9 @@ searchFormD.addEventListener('submit', (event) => {
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
     }
+    const modifyDeleteForm = document.querySelector('.dm-criteria');
+    modifyDeleteForm.style.display = "block";
 });
-
 
 
 closeButton.addEventListener('click', (event) => {
@@ -146,4 +147,6 @@ closeButton.addEventListener('click', (event) => {
     event.preventDefault();
     resultsTable.style.display = 'none';
     isResultsTableVisible = false;
+    const modifyDeleteForm = document.querySelector('.dm-criteria');
+    modifyDeleteForm.style.display = "none";
 });

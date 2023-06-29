@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Lawsuits</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
 <h1>Lawsuits</h1>
@@ -41,14 +41,23 @@
             </select>
         </div>
         <div class="search-option-recherecher">
-            <button id="button-rechercher"type="submit">Rechercher</button>
+            <button id="button-rechercher" type="submit">Rechercher</button>
             <div id="parentContainer">
                 <button id="closeButton" class="closeButton">Close</button>
             </div>
         </div>
 
-
     </form>
+    <div class="dm-criteria">
+        <label for="dm-criteria-options">Action:</label>
+        <select id="dm-criteria-options" name="dm-search-criteria">
+            <option value="Modify">Modify</option>
+            <option value="Delete">Delete</option>
+        </select>
+        <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">
+        <button type="submit">Apply</button>
+    </div>
+
     <div id="resultsTable"></div>
 </div>
 <form id="inspection-form">
