@@ -116,11 +116,56 @@ function handleDataForDateRestaurantResponse(response) {
     resultsTable.appendChild(tableRow);
 }
 
+async function fetchModifyLawsuits(etablissement) {
+    try {
+        const data = {
+            updated_etablissement: etablissement
+        };
+
+        const response = await fetch(`/contrevenants/${etablissement}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            handleResponseData(responseData);
+        } else {
+            console.log('Error occurred during modifyLawsuits');
+        }
+    } catch (error) {
+        console.error('Error', error);
+    }
+}
+
+async function fetchDeleteLawsuits(etablissement) {
+    try {
+        const response = await fetch(`/contrevenants/${etablissement}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            handleResponseData(responseData);
+        } else {
+            console.log('Error occurred during deleteLawsuits');
+        }
+    } catch (error) {
+        console.error('Error', error);
+    }
+}
+
+
+
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
 const resultsTable = document.getElementById('resultsTable');
 const restaurantList = document.getElementById('restaurant-list');
+const applyButton = document.getElementById("applyButton");
 let isResultsTableVisible = true;
 
 searchFormD.addEventListener('submit', (event) => {
@@ -149,4 +194,18 @@ closeButton.addEventListener('click', (event) => {
     isResultsTableVisible = false;
     const modifyDeleteForm = document.querySelector('.dm-criteria');
     modifyDeleteForm.style.display = "none";
+});
+
+applyButton.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const selectedAction = document.getElementById("dm-criteria-options").value;
+    const searchInputValue = document.getElementById("md-search-input").value;
+
+    if (selectedAction === "Modify") {
+        fetchModifyLawsuits(searchInputValue);
+    } else if (selectedAction === "Delete") {
+        fetchDeleteLawsuits(searchInputValue);
+    } else {
+        console.log("Invalid action selected.");
+    }
 });
