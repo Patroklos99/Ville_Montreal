@@ -117,6 +117,7 @@ function handleDataForDateRestaurantResponse(response) {
 }
 
 async function fetchModifyLawsuits(etablissement) {
+    debugger
     try {
         const data = {
             updated_etablissement: etablissement
@@ -132,7 +133,7 @@ async function fetchModifyLawsuits(etablissement) {
 
         if (response.ok) {
             const responseData = await response.json();
-            handleResponseData(responseData);
+            handleFetchInspectionData(responseData);
         } else {
             console.log('Error occurred during modifyLawsuits');
         }
@@ -142,6 +143,7 @@ async function fetchModifyLawsuits(etablissement) {
 }
 
 async function fetchDeleteLawsuits(etablissement) {
+    debugger
     try {
         const response = await fetch(`/contrevenants/${etablissement}`, {
             method: 'DELETE',
@@ -149,7 +151,7 @@ async function fetchDeleteLawsuits(etablissement) {
 
         if (response.ok) {
             const responseData = await response.json();
-            handleResponseData(responseData);
+            handleFetchInspectionData(responseData);
         } else {
             console.log('Error occurred during deleteLawsuits');
         }
@@ -159,16 +161,19 @@ async function fetchDeleteLawsuits(etablissement) {
 }
 
 
-
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
 const resultsTable = document.getElementById('resultsTable');
 const restaurantList = document.getElementById('restaurant-list');
 const applyButton = document.getElementById("applyButton");
+const displayFormButton = document.getElementById('displayFormButton');
+const hiddenForm = document.getElementById('hiddenForm');
 let isResultsTableVisible = true;
 
-searchFormD.addEventListener('submit', (event) => {
+searchFormD.addEventListener('submit', handleSearchFormSubmit);
+
+function handleSearchFormSubmit(event) {
     debugger
     event.preventDefault();
     const date1 = document.getElementById('date1').value;
@@ -176,15 +181,23 @@ searchFormD.addEventListener('submit', (event) => {
     const selectedRestaurantValue = restaurantList.value;
     if (selectedRestaurantValue) {
         fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue);
+        resultsTable.style.display = 'block';
+        isResultsTableVisible = true;
     } else {
         fetchDataForDate(date1, date2);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
     }
-    const modifyDeleteForm = document.querySelector('.dm-criteria');
-    modifyDeleteForm.style.display = "block";
-});
 
+    const modifyDeleteForm = document.querySelector('.dm-criteria');
+    if (selectedRestaurantValue) {
+        modifyDeleteForm.style.display = 'none';
+        resultsTable.classList.remove('dm-criteria');
+    } else {
+        modifyDeleteForm.style.display = 'block';
+        resultsTable.classList.add('dm-criteria');
+    }
+}
 
 closeButton.addEventListener('click', (event) => {
     debugger
@@ -196,16 +209,26 @@ closeButton.addEventListener('click', (event) => {
     modifyDeleteForm.style.display = "none";
 });
 
-applyButton.addEventListener('submit', (event) => {
+applyButton.addEventListener('click', async (event) => {
     event.preventDefault();
     const selectedAction = document.getElementById("dm-criteria-options").value;
     const searchInputValue = document.getElementById("md-search-input").value;
 
     if (selectedAction === "Modify") {
-        fetchModifyLawsuits(searchInputValue);
+        fetchModifyLawsuits(searchInputValue)
+            .then(() => handleSearchFormSubmit(event))
     } else if (selectedAction === "Delete") {
-        fetchDeleteLawsuits(searchInputValue);
+        fetchDeleteLawsuits(searchInputValue)
+            .then(() => handleSearchFormSubmit(event))
     } else {
         console.log("Invalid action selected.");
+    }
+});
+
+displayFormButton.addEventListener('click', () => {
+    if (hiddenForm.style.display === 'none' || hiddenForm.style.display === '') {
+        hiddenForm.style.display = 'block';
+    } else {
+        hiddenForm.style.display = 'none';
     }
 });

@@ -7,58 +7,65 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
-<h1>Lawsuits</h1>
+<h1 id="lawsuits">Lawsuits</h1>
 
-<form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
-    <div class="search-option">
-        <label for="search-criteria">Search by:</label>
-        <select id="search-criteria" name="search-criteria">
-            <option value="establishment-name">Establishment Name</option>
-            <option value="owner-name">Owner Name</option>
-            <option value="street-name">Street Name</option>
-        </select>
-        <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
-        <button type="submit">Search</button>
-    </div>
-</form>
+
+<div class="container">
+    <form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
+        <div class="search-option">
+            <label for="search-criteria">Search by:</label>
+            <select id="search-criteria" name="search-criteria">
+                <option value="establishment-name">Establishment Name</option>
+                <option value="owner-name">Owner Name</option>
+                <option value="street-name">Street Name</option>
+            </select>
+            <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
+            <button type="submit">Search</button>
+        </div>
+    </form>
+    <button id="displayFormButton">Display Form</button>
+</div>
 <div id="resultsContainer"></div>
 
-<h1 id="searchTitle">Formulaire de recherche rapide</h1>
-<div class="container">
-    <form id="searchFormDate">
-        <div class="search-option">
-            <label for="date1">Date 1:</label>
-            <input type="date" id="date1" name="date1">
-        </div>
-        <div class="search-option">
-            <label for="date2">Date 2:</label>
-            <input type="date" id="date2" name="date2">
-        </div>
-        <div class="rolling-list">
-            <select id="restaurant-list">
-                <option value="">Select a restaurant</option>
-                <!-- Options will be dynamically added here -->
-            </select>
-        </div>
-        <div class="search-option-recherecher">
-            <button id="button-rechercher" type="submit">Rechercher</button>
-            <div id="parentContainer">
-                <button id="closeButton" class="closeButton">Close</button>
+<div id="hiddenForm" style="display: none;">
+    <h1 id="searchTitle">Formulaire de recherche rapide</h1>
+    <div class="container">
+        <form id="searchFormDate">
+            <div class="search-option-rapide">
+                <label for="date1">Date 1:</label>
+                <input type="date" id="date1" name="date1">
             </div>
+            <div class="search-option-rapide">
+                <label for="date2">Date 2:</label>
+                <input type="date" id="date2" name="date2">
+            </div>
+            <div class="rolling-list">
+                <label>Restaurant:</label>
+                <select id="restaurant-list">
+                    <option value="">Select a restaurant</option>
+                    <!-- Options will be dynamically added here -->
+                </select>
+            </div>
+            <div class="search-option-rechercher">
+                <button id="button-rechercher" type="submit">Rechercher</button>
+                <div id="parentContainer">
+                    <button id="closeButton" class="closeButton">Close</button>
+                </div>
+            </div>
+
+        </form>
+        <div class="dm-criteria">
+            <label for="dm-criteria-options">Action:</label>
+            <select id="dm-criteria-options" name="dm-search-criteria">
+                <option value="Modify">Modify</option>
+                <option value="Delete">Delete</option>
+            </select>
+            <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">
+            <button id="applyButton" type="submit">Apply</button>
         </div>
 
-    </form>
-    <div class="dm-criteria">
-        <label for="dm-criteria-options">Action:</label>
-        <select id="dm-criteria-options" name="dm-search-criteria">
-            <option value="Modify">Modify</option>
-            <option value="Delete">Delete</option>
-        </select>
-        <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">
-        <button type="submit">Apply</button>
+        <div id="resultsTable"></div>
     </div>
-
-    <div id="resultsTable"></div>
 </div>
 <form id="inspection-form">
     <label for="establishment">Nom de l'établissement:</label>

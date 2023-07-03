@@ -8,11 +8,22 @@
 .search-option {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-label {
-    margin-right: 10px;
+#hiddenForm {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#displayFormButton {
+    align-items: center;
+    font-size: 18px; /* Increase the font size */
+}
+
+#lawsuits {
+    text-align: center;
 }
 
 #search-criteria {
@@ -73,7 +84,7 @@ li {
     margin-left: 10px;
 }
 
-.search-option-recherecher {
+.search-option-rechercher {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -94,8 +105,8 @@ hr {
 .dm-criteria {
     display: none;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    font-size: 20px; /* Increase the font size */
-    padding: 10px; /* Add padding to increase element size */
+}
+
+#resultsTable {
+    padding: 40px;
 }

@@ -307,6 +307,50 @@ def delete_inspection_request(id):
     return jsonify({"message": f"Inspection request with ID {id} deleted successfully"})
 
 
+@app.route("/contrevenants/<string:etablissement>", methods=["PUT", "DELETE"])
+def update_or_delete_lawsuit(etablissement):
+    if request.method == "PUT":
+        return update_lawsuits(etablissement)
+    elif request.method == "DELETE":
+        return delete_lawsuits(etablissement)
+    else:
+        return jsonify({"message": "Method not allowed."}), 405
+
+
+def update_lawsuits(etablissement):
+    updated_etablissement = request.json.get("updated_etablissement")
+
+    try:
+        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
+
+        for lawsuit in lawsuits:
+            lawsuit.etablissement = updated_etablissement
+
+        db.session.commit()
+
+        return jsonify({"message": f"Lawsuits for establishment {etablissement} updated successfully."})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Failed to update lawsuits for establishment {etablissement}."}), 500
+
+
+def delete_lawsuits(etablissement):
+    try:
+        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
+
+        for lawsuit in lawsuits:
+            db.session.delete(lawsuit)
+
+        db.session.commit()
+
+        return jsonify({"message": f"Lawsuits for establishment {etablissement} deleted successfully."})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Failed to delete lawsuits for establishment {etablissement}."}), 500
+
+
 if __name__ == '__main__':
     job_schedule()
     app.run()
