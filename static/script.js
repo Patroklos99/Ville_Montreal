@@ -179,11 +179,11 @@ function handleSearchFormSubmit(event) {
     const date1 = document.getElementById('date1').value;
     const date2 = document.getElementById('date2').value;
     const selectedRestaurantValue = restaurantList.value;
-    if (selectedRestaurantValue) {
+    if (selectedRestaurantValue && date1 && date2) {
         fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
-    } else {
+    } else if (!selectedRestaurantValue && date1 && date2 ){
         fetchDataForDate(date1, date2);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
@@ -193,7 +193,7 @@ function handleSearchFormSubmit(event) {
     if (selectedRestaurantValue) {
         modifyDeleteForm.style.display = 'none';
         resultsTable.classList.remove('dm-criteria');
-    } else {
+    } else if (!selectedRestaurantValue && date1 && date2){
         modifyDeleteForm.style.display = 'block';
         resultsTable.classList.add('dm-criteria');
     }
