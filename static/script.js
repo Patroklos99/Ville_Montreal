@@ -160,6 +160,28 @@ async function fetchDeleteLawsuits(etablissement) {
     }
 }
 
+async function fetchLogin() {
+    debugger
+    try {
+        const response = await fetch(`/login`, {
+            method: 'GET',
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            if (!isLoggedIn()) {
+                handleFetchInspectionData(responseData);
+                modifyLogin(true)
+            } else {
+                handleFetchInspectionData({message: "You have already logged in"});
+            }
+        } else {
+            console.log('Error occurred during modifyLawsuits');
+        }
+    } catch (error) {
+        console.error('Error', error);
+    }
+}
 
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
@@ -169,7 +191,9 @@ const restaurantList = document.getElementById('restaurant-list');
 const applyButton = document.getElementById("applyButton");
 const displayFormButton = document.getElementById('displayFormButton');
 const hiddenForm = document.getElementById('hiddenForm');
+const loginButton = document.getElementById('loginButton')
 let isResultsTableVisible = true;
+let loggedIn = false;
 
 searchFormD.addEventListener('submit', handleSearchFormSubmit);
 
@@ -183,7 +207,7 @@ function handleSearchFormSubmit(event) {
         fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
-    } else if (!selectedRestaurantValue && date1 && date2 ){
+    } else if (!selectedRestaurantValue && date1 && date2) {
         fetchDataForDate(date1, date2);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
@@ -193,7 +217,7 @@ function handleSearchFormSubmit(event) {
     if (selectedRestaurantValue) {
         modifyDeleteForm.style.display = 'none';
         resultsTable.classList.remove('dm-criteria');
-    } else if (!selectedRestaurantValue && date1 && date2){
+    } else if (!selectedRestaurantValue && date1 && date2) {
         modifyDeleteForm.style.display = 'block';
         resultsTable.classList.add('dm-criteria');
     }
@@ -210,9 +234,15 @@ closeButton.addEventListener('click', (event) => {
 });
 
 applyButton.addEventListener('click', async (event) => {
+    debugger
     event.preventDefault();
     const selectedAction = document.getElementById("dm-criteria-options").value;
     const searchInputValue = document.getElementById("md-search-input").value;
+
+    if (!isLoggedIn()) {
+        handleFetchInspectionData({message: "You have to log in first"});
+        return;
+    }
 
     if (selectedAction === "Modify") {
         fetchModifyLawsuits(searchInputValue)
@@ -232,3 +262,16 @@ displayFormButton.addEventListener('click', () => {
         hiddenForm.style.display = 'none';
     }
 });
+
+loginButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+    fetchLogin();
+});
+
+function isLoggedIn() {
+    return loggedIn;
+}
+
+function modifyLogin(status) {
+    loggedIn = status;
+}

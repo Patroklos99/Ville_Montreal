@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1 id="lawsuits">Lawsuits</h1>
-
+<button id="loginButton" >Login</button>
 
 <div class="container">
     <form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
@@ -61,7 +61,7 @@
                 <option value="Delete">Delete</option>
             </select>
             <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">
-            <button id="applyButton" type="submit">Apply</button>
+            <button id="applyButton" type="submit" >Apply</button>
         </div>
 
         <div id="resultsTable"></div>

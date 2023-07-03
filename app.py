@@ -4,13 +4,14 @@ import yaml
 import smtplib
 import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify, Response
+from flask import Flask, request, redirect, render_template, jsonify, Response, current_app
 from backend import lawsuit_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from utils import auth_required
 
 from jsonschema import validate
 from json_schema import inspection_schema
@@ -349,6 +350,12 @@ def delete_lawsuits(etablissement):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Failed to delete lawsuits for establishment {etablissement}."}), 500
+
+
+@app.route("/login")
+@auth_required
+def login():
+    return jsonify({"message": f"You have successfully logged in"})
 
 
 if __name__ == '__main__':
