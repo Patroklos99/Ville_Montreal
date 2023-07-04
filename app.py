@@ -4,8 +4,9 @@ import yaml
 import smtplib
 import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify, Response, current_app
+from flask import Flask, request, redirect, render_template, jsonify, Response
 from backend import lawsuit_model
+from backend import user_model
 from backend.database import db
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -16,7 +17,11 @@ from utils import auth_required
 from jsonschema import validate
 from json_schema import inspection_schema
 
+Users = user_model.User
+Lawsuits = lawsuit_model.Lawsuit
+
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.config.from_prefixed_env()
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
 
@@ -74,14 +79,14 @@ def handle_search():
 # Handle invalid search criteria
 @app.route("/etablissements/<etablissement>", methods=["GET"])
 def get_etablissements(etablissement):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
+    results = Lawsuits.query.filter(Lawsuits.etablissement.ilike(f'%{etablissement}%')).all()
     print(results)
     return render_template("Frontend/results.html", results=results)
 
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
+    results = Lawsuits.query.filter(Lawsuits.proprietaire.ilike(f'%{proprietaire}%')).all()
     if results:
         return render_template("Frontend/results.html", results=results)
     else:
@@ -90,7 +95,7 @@ def get_proprietaires(proprietaire):
 
 @app.route("/adresses/<adresse>", methods=["GET"])
 def get_rues(adresse):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
+    results = Lawsuits.query.filter(Lawsuits.adresse.ilike(f'%{adresse}%')).all()
     return render_template("Frontend/results.html", results=results)
 
 
@@ -100,7 +105,7 @@ def get_contrevenants():
     date_fin = request.json.get("date2")
 
     # Filtrer les contraventions entre les deux dates spécifiées
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.date.between(date_debut, date_fin)).all()
+    results = Lawsuits.query.filter(Lawsuits.date.between(date_debut, date_fin)).all()
 
     # Convertir les résultats en liste de dictionnaires
     result = [lawsuit.to_dict() for lawsuit in results]
@@ -115,9 +120,9 @@ def get_contrevenants_restaurant():
     restaurant = request.json.get("restaurant")
 
     # Filtrer les contraventions du restaurant entre les deux dates spécifiées
-    results = lawsuit_model.Lawsuit.query.filter(
-        lawsuit_model.Lawsuit.etablissement == restaurant,
-        lawsuit_model.Lawsuit.date.between(date_debut, date_fin)
+    results = Lawsuits.query.filter(
+        Lawsuits.etablissement == restaurant,
+        Lawsuits.date.between(date_debut, date_fin)
     ).all()
 
     # Obtenir uniquement les descriptions des contraventions
@@ -130,10 +135,10 @@ def get_contrevenants_restaurant():
 @app.route("/etablissements/infractions", methods=["GET"])
 def get_etablissements_infractions():
     # Effectuer la requête pour obtenir la liste triée des établissements avec le nombre d'infractions
-    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
-                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
-        .group_by(lawsuit_model.Lawsuit.etablissement) \
-        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+    results = db.session.query(Lawsuits.etablissement,
+                               db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")) \
+        .group_by(Lawsuits.etablissement) \
+        .order_by(db.func.count(Lawsuits.id_poursuite).desc()) \
         .all()
 
     # Convertir les résultats en liste de dictionnaires
@@ -148,10 +153,10 @@ def get_etablissements_infractions():
 def get_etablissements_infractions_xml():
     # Perform the query to get the sorted list of establishments with the number of infractions
     results = db.session.query(
-        lawsuit_model.Lawsuit.etablissement,
-        db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")
-    ).group_by(lawsuit_model.Lawsuit.etablissement).order_by(
-        db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()).all()
+        Lawsuits.etablissement,
+        db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")
+    ).group_by(Lawsuits.etablissement).order_by(
+        db.func.count(Lawsuits.id_poursuite).desc()).all()
 
     # Convert the results to a list of dictionaries
     result = [
@@ -171,10 +176,10 @@ def get_etablissements_infractions_xml():
 @app.route("/etablissements/infractionsCSV", methods=["GET"])
 def get_etablissements_infractions_csv():
     # Perform the query to get the sorted list of establishments with the number of infractions
-    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
-                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
-        .group_by(lawsuit_model.Lawsuit.etablissement) \
-        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+    results = db.session.query(Lawsuits.etablissement,
+                               db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")) \
+        .group_by(Lawsuits.etablissement) \
+        .order_by(db.func.count(Lawsuits.id_poursuite).desc()) \
         .all()
 
     # Create the CSV content
@@ -214,11 +219,11 @@ def update_db():
         for lawsuit in _lawsuits:
             id_poursuite = lawsuit['id_poursuite']
 
-            existing_record = lawsuit_model.Lawsuit.query.filter_by(id_poursuite=id_poursuite).first()
+            existing_record = Lawsuits.query.filter_by(id_poursuite=id_poursuite).first()
             if not existing_record:
                 new_violations.append(lawsuit)
 
-            new_record = lawsuit_model.Lawsuit(
+            new_record = Lawsuits(
                 id_poursuite=id_poursuite,
                 buisness_id=lawsuit['business_id'],
                 date=lawsuit['date'],
@@ -322,7 +327,7 @@ def update_lawsuits(etablissement):
     updated_etablissement = request.json.get("updated_etablissement")
 
     try:
-        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
+        lawsuits = Lawsuits.query.filter_by(etablissement=etablissement).all()
 
         for lawsuit in lawsuits:
             lawsuit.etablissement = updated_etablissement
@@ -338,7 +343,7 @@ def update_lawsuits(etablissement):
 
 def delete_lawsuits(etablissement):
     try:
-        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
+        lawsuits = Lawsuits.query.filter_by(etablissement=etablissement).all()
 
         for lawsuit in lawsuits:
             db.session.delete(lawsuit)
