@@ -5,6 +5,8 @@ import smtplib
 import dicttoxml
 
 from flask import Flask, request, redirect, render_template, jsonify, Response
+from flask_restx import ValidationError
+
 from backend import lawsuit_model
 from backend import user_model
 from backend.database import db
@@ -15,7 +17,7 @@ from email.mime.multipart import MIMEMultipart
 from utils import auth_required
 
 from jsonschema import validate
-from json_schema import inspection_schema
+from json_schema import inspection_schema, user_schema
 
 Users = user_model.User
 Lawsuits = lawsuit_model.Lawsuit
@@ -366,6 +368,11 @@ def login():
 @app.route("/users/create", methods=['POST'])
 def create_user():
     data = request.get_json()
+
+    try:
+        validate(data, user_schema)  # Validate the JSON data against the schema
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
 
     full_name = data.get('full_name')
     email = data.get('email')
