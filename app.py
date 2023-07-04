@@ -363,6 +363,24 @@ def login():
     return jsonify({"message": f"You have successfully logged in"})
 
 
+@app.route("/users/create", methods=['POST'])
+def create_user():
+    data = request.get_json()
+
+    full_name = data.get('full_name')
+    email = data.get('email')
+    establishments = data.get('establishments')
+    password = data.get('password')
+
+    try:
+        user = Users(full_name=full_name, email=email, establishments=establishments, password=password)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'message': 'User created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     job_schedule()
     app.run()
