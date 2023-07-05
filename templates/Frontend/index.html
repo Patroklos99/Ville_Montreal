@@ -8,7 +8,67 @@
 </head>
 <body>
 <h1 id="lawsuits">Lawsuits</h1>
-<button id="loginButton" >Login</button>
+<button id="loginButton">Login</button>
+
+<div class="center-signup">
+    <button id="show-signup">Sign up</button>
+</div>
+
+<div class="popup-signup">
+    <div class="close-btn">&times;</div>
+    <div class="login-form">
+        <h2>Log in</h2>
+        <div class="form-element">
+            <label for="nom-signup">Name</label>
+            <input type="text" id="nom-signup" placeholder="Enter full name">
+        </div>
+        <div class="form-element">
+            <label for="email-signup">Email</label>
+            <input type="text" id="email-signup" placeholder="Enter email">
+        </div>
+        <div class="form-element">
+            <label for="establishments-signup">Monitored Establishments</label>
+            <input type="text" id="establishments-signup" placeholder="Enter establishments (comma-separated)">
+        </div>
+        <div class="form-element">
+            <label for="password-signup">Password</label>
+            <input type="password" id="password-signup" placeholder="Enter password">
+        </div>
+        <div class="form-element">
+            <button>Sign up</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="center">
+    <button id="show-login">Login</button>
+</div>
+<div class="popup">
+    <div class="close-btn">&times;</div>
+    <div class="login-form">
+        <h2>Log in</h2>
+        <div class="form-element">
+            <label for="email">Email</label>
+            <input type="text" id="email" placeholder="Enter email">
+        </div>
+        <div class="form-element">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <div class="form-element">
+            <input type="checkbox" id="remember-me">
+            <labe for="remember-me">Remember me</labe>
+        </div>
+        <div class="form-element">
+            <button>Sign in</button>
+        </div>
+        <div class="form-element">
+            <a href="#">Forgot Password</a>
+        </div>
+    </div>
+</div>
+
 
 <div class="container">
     <form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
@@ -61,7 +121,7 @@
                 <option value="Delete">Delete</option>
             </select>
             <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">
-            <button id="applyButton" type="submit" >Apply</button>
+            <button id="applyButton" type="submit">Apply</button>
         </div>
 
         <div id="resultsTable"></div>

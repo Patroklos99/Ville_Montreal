@@ -8,8 +8,8 @@ from flask import Flask, request, redirect, render_template, jsonify, Response
 from flask_restx import ValidationError
 
 from backend import lawsuit_model
-from backend import user_model
 from backend.database import db
+from backend import user_model
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
 from email.mime.text import MIMEText
@@ -18,9 +18,6 @@ from utils import auth_required
 
 from jsonschema import validate
 from json_schema import inspection_schema, user_schema
-
-Users = user_model.User
-Lawsuits = lawsuit_model.Lawsuit
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_prefixed_env()
@@ -54,6 +51,7 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()  # initialize the application with the DB schema.
+
 
 
 @app.route("/")
@@ -391,3 +389,5 @@ def create_user():
 if __name__ == '__main__':
     job_schedule()
     app.run()
+    Users = user_model.User
+    Lawsuits = lawsuit_model.Lawsuit

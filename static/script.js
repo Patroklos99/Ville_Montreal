@@ -1,3 +1,4 @@
+
 async function fetchDataForDate(date1, date2) {
     try {
         const response = await fetch('/contrevenants', {
@@ -275,3 +276,19 @@ function isLoggedIn() {
 function modifyLogin(status) {
     loggedIn = status;
 }
+
+document.querySelector("#show-login").addEventListener("click",function () {
+    document.querySelector(".popup").classList.add("active");
+});
+
+document.querySelector(".popup .close-btn").addEventListener("click", function () {
+    document.querySelector(".popup").classList.remove("active");
+})
+
+document.querySelector("#show-signup").addEventListener("click",function () {
+    document.querySelector(".popup-signup").classList.add("active");
+});
+
+document.querySelector(".popup-signup .close-btn").addEventListener("click", function () {
+    document.querySelector(".popup-signup").classList.remove("active");
+})
