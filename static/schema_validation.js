@@ -49,13 +49,27 @@ async function fetchInspectionData(data) {
 }
 
 function handleFetchInspectionData(data) {
-    // Show the toast notification
-    Toastify({
-        text: data.message,
-        duration: 3000, // Duration in milliseconds (e.g., 3000 = 3 seconds)
-        close: true, // Show a close button to manually close the notification
-        gravity: "top", // Position the notification at the top of the screen
-        // You can customize other options like background color, font color, etc.
-    }).showToast();
+    debugger
+    if (data && data.error) {
+        // Show error message
+        Toastify({
+            text: data.error,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            backgroundColor: "#ff6b6b" // Set custom background color for error messages
+        }).showToast();
+    } else if (data && data.message) {
+        // Show success message
+        Toastify({
+            text: data.message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            backgroundColor: "#6bd9a8" // Set custom background color for success messages
+        }).showToast();
+    } else {
+        console.log("Invalid response data");
+    }
 }
 

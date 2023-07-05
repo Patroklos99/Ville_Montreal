@@ -53,7 +53,6 @@ with app.app_context():
     db.create_all()  # initialize the application with the DB schema.
 
 
-
 @app.route("/")
 def home():
     return render_template("Frontend/index.html")
@@ -79,14 +78,14 @@ def handle_search():
 # Handle invalid search criteria
 @app.route("/etablissements/<etablissement>", methods=["GET"])
 def get_etablissements(etablissement):
-    results = Lawsuits.query.filter(Lawsuits.etablissement.ilike(f'%{etablissement}%')).all()
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
     print(results)
     return render_template("Frontend/results.html", results=results)
 
 
 @app.route("/proprietaires/<proprietaire>", methods=["GET"])
 def get_proprietaires(proprietaire):
-    results = Lawsuits.query.filter(Lawsuits.proprietaire.ilike(f'%{proprietaire}%')).all()
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
     if results:
         return render_template("Frontend/results.html", results=results)
     else:
@@ -95,7 +94,7 @@ def get_proprietaires(proprietaire):
 
 @app.route("/adresses/<adresse>", methods=["GET"])
 def get_rues(adresse):
-    results = Lawsuits.query.filter(Lawsuits.adresse.ilike(f'%{adresse}%')).all()
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
     return render_template("Frontend/results.html", results=results)
 
 
@@ -105,7 +104,7 @@ def get_contrevenants():
     date_fin = request.json.get("date2")
 
     # Filtrer les contraventions entre les deux dates spécifiées
-    results = Lawsuits.query.filter(Lawsuits.date.between(date_debut, date_fin)).all()
+    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.date.between(date_debut, date_fin)).all()
 
     # Convertir les résultats en liste de dictionnaires
     result = [lawsuit.to_dict() for lawsuit in results]
@@ -120,9 +119,9 @@ def get_contrevenants_restaurant():
     restaurant = request.json.get("restaurant")
 
     # Filtrer les contraventions du restaurant entre les deux dates spécifiées
-    results = Lawsuits.query.filter(
-        Lawsuits.etablissement == restaurant,
-        Lawsuits.date.between(date_debut, date_fin)
+    results = lawsuit_model.Lawsuit.query.filter(
+        lawsuit_model.Lawsuit.etablissement == restaurant,
+        lawsuit_model.Lawsuit.date.between(date_debut, date_fin)
     ).all()
 
     # Obtenir uniquement les descriptions des contraventions
@@ -135,10 +134,10 @@ def get_contrevenants_restaurant():
 @app.route("/etablissements/infractions", methods=["GET"])
 def get_etablissements_infractions():
     # Effectuer la requête pour obtenir la liste triée des établissements avec le nombre d'infractions
-    results = db.session.query(Lawsuits.etablissement,
-                               db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")) \
-        .group_by(Lawsuits.etablissement) \
-        .order_by(db.func.count(Lawsuits.id_poursuite).desc()) \
+    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+        .group_by(lawsuit_model.Lawsuit.etablissement) \
+        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
         .all()
 
     # Convertir les résultats en liste de dictionnaires
@@ -153,10 +152,10 @@ def get_etablissements_infractions():
 def get_etablissements_infractions_xml():
     # Perform the query to get the sorted list of establishments with the number of infractions
     results = db.session.query(
-        Lawsuits.etablissement,
-        db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")
-    ).group_by(Lawsuits.etablissement).order_by(
-        db.func.count(Lawsuits.id_poursuite).desc()).all()
+        lawsuit_model.Lawsuit.etablissement,
+        db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")
+    ).group_by(lawsuit_model.Lawsuit.etablissement).order_by(
+        db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()).all()
 
     # Convert the results to a list of dictionaries
     result = [
@@ -176,10 +175,10 @@ def get_etablissements_infractions_xml():
 @app.route("/etablissements/infractionsCSV", methods=["GET"])
 def get_etablissements_infractions_csv():
     # Perform the query to get the sorted list of establishments with the number of infractions
-    results = db.session.query(Lawsuits.etablissement,
-                               db.func.count(Lawsuits.id_poursuite).label("nombre_infractions")) \
-        .group_by(Lawsuits.etablissement) \
-        .order_by(db.func.count(Lawsuits.id_poursuite).desc()) \
+    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+        .group_by(lawsuit_model.Lawsuit.etablissement) \
+        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
         .all()
 
     # Create the CSV content
@@ -219,11 +218,11 @@ def update_db():
         for lawsuit in _lawsuits:
             id_poursuite = lawsuit['id_poursuite']
 
-            existing_record = Lawsuits.query.filter_by(id_poursuite=id_poursuite).first()
+            existing_record = lawsuit_model.Lawsuit.query.filter_by(id_poursuite=id_poursuite).first()
             if not existing_record:
                 new_violations.append(lawsuit)
 
-            new_record = Lawsuits(
+            new_record = lawsuit_model.Lawsuit(
                 id_poursuite=id_poursuite,
                 buisness_id=lawsuit['business_id'],
                 date=lawsuit['date'],
@@ -327,14 +326,14 @@ def update_lawsuits(etablissement):
     updated_etablissement = request.json.get("updated_etablissement")
 
     try:
-        lawsuits = Lawsuits.query.filter_by(etablissement=etablissement).all()
+        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
 
         for lawsuit in lawsuits:
             lawsuit.etablissement = updated_etablissement
 
         db.session.commit()
 
-        return jsonify({"message": f"Lawsuits for establishment {etablissement} updated successfully."})
+        return jsonify({"message": f"lawsuit_model.Lawsuit for establishment {etablissement} updated successfully."})
 
     except Exception as e:
         db.session.rollback()
@@ -343,14 +342,14 @@ def update_lawsuits(etablissement):
 
 def delete_lawsuits(etablissement):
     try:
-        lawsuits = Lawsuits.query.filter_by(etablissement=etablissement).all()
+        lawsuits = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).all()
 
         for lawsuit in lawsuits:
             db.session.delete(lawsuit)
 
         db.session.commit()
 
-        return jsonify({"message": f"Lawsuits for establishment {etablissement} deleted successfully."})
+        return jsonify({"message": f"lawsuit_model.Lawsuit for establishment {etablissement} deleted successfully."})
 
     except Exception as e:
         db.session.rollback()
@@ -367,18 +366,24 @@ def login():
 def create_user():
     data = request.get_json()
 
-    try:
-        validate(data, user_schema)  # Validate the JSON data against the schema
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
+    # try:
+    #     validate(data, user_schema)  # Validate the JSON data against the schema
+    # except ValidationError as e:
+    #     print("error aca")
+    #     return jsonify({'error': str(e)}), 400
 
     full_name = data.get('full_name')
     email = data.get('email')
     establishments = data.get('establishments')
     password = data.get('password')
 
+    # Check if the email already exists
+    existing_user = user_model.User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({'error': 'Email already exists'}), 400
+
     try:
-        user = Users(full_name=full_name, email=email, establishments=establishments, password=password)
+        user = user_model.User(full_name=full_name, email=email, establishments=establishments, password=password)
         db.session.add(user)
         db.session.commit()
         return jsonify({'message': 'User created successfully'}), 201
@@ -389,5 +394,5 @@ def create_user():
 if __name__ == '__main__':
     job_schedule()
     app.run()
-    Users = user_model.User
-    Lawsuits = lawsuit_model.Lawsuit
+    # user_model.User = user_model.User
+    # lawsuit_model.Lawsuit = lawsuit_model.Lawsuit

@@ -1,3 +1,19 @@
+document.querySelector("#show-login").addEventListener("click", function () {
+    document.querySelector(".popup").classList.add("active");
+});
+
+document.querySelector(".popup .close-btn").addEventListener("click", function () {
+    document.querySelector(".popup").classList.remove("active");
+})
+
+document.querySelector("#show-signup").addEventListener("click", function () {
+    document.querySelector(".popup-signup").classList.add("active");
+    document.querySelector(".popup").classList.remove("active");
+});
+
+document.querySelector(".popup-signup .close-btn").addEventListener("click", function () {
+    document.querySelector(".popup-signup").classList.remove("active");
+});
 
 async function fetchDataForDate(date1, date2) {
     try {
@@ -184,6 +200,32 @@ async function fetchLogin() {
     }
 }
 
+async function fetchDataUser(userData) {
+    debugger
+    try {
+        const response = await fetch('/users/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            handleFetchInspectionData(responseData);
+            document.querySelector(".popup-signup").classList.remove("active");
+        } else {
+            const erroResponseData = await response.json();
+            handleFetchInspectionData(erroResponseData);
+            // document.querySelector(".popup-signup").classList.add("active-sign");
+        }
+    } catch (error) {
+        console.error('Error', error);
+    }
+}
+
+
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
@@ -193,6 +235,7 @@ const applyButton = document.getElementById("applyButton");
 const displayFormButton = document.getElementById('displayFormButton');
 const hiddenForm = document.getElementById('hiddenForm');
 const loginButton = document.getElementById('loginButton')
+const signupButton = document.getElementById('signup-button')
 let isResultsTableVisible = true;
 let loggedIn = false;
 
@@ -269,6 +312,25 @@ loginButton.addEventListener("click", async (event) => {
     fetchLogin();
 });
 
+signupButton.addEventListener("click", async (event) => {
+    const full_name = document.getElementById('nom-signup').value;
+    const email = document.getElementById('email-signup').value;
+    const establishments = document.getElementById('establishments-signup').value;
+    const password = document.getElementById('password-signup').value;
+
+    if (full_name && email && establishments && password) {
+        const userData = {
+            full_name,
+            email,
+            establishments,
+            password
+        };
+        await fetchDataUser(userData);
+    } else {
+        handleFetchInspectionData({message: "You have to fill in all the inputs"});
+    }
+})
+
 function isLoggedIn() {
     return loggedIn;
 }
@@ -277,21 +339,3 @@ function modifyLogin(status) {
     loggedIn = status;
 }
 
-document.querySelector("#show-login").addEventListener("click",function () {
-    document.querySelector(".popup").classList.add("active");
-});
-
-document.querySelector(".popup .close-btn").addEventListener("click", function () {
-    document.querySelector(".popup").classList.remove("active");
-})
-
-document.querySelector("#show-signup").addEventListener("click", function () {
-    document.querySelector(".popup-signup").classList.add("active");
-    document.querySelector(".popup").classList.remove("active");
-    document.querySelector("#show-login").style.display = "none"; // Hide the login button
-});
-
-document.querySelector(".popup-signup .close-btn").addEventListener("click", function () {
-    document.querySelector(".popup-signup").classList.remove("active");
-    document.querySelector("#show-login").style.display = "block"; // Show the login button
-});
