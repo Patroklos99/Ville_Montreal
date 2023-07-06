@@ -177,11 +177,15 @@ async function fetchDeleteLawsuits(etablissement) {
     }
 }
 
-async function fetchLogin() {
+async function fetchLogin(data) {
     debugger
     try {
         const response = await fetch(`/login`, {
-            method: 'GET',
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify(data)
         });
 
         if (response.ok) {
@@ -189,6 +193,7 @@ async function fetchLogin() {
             if (!isLoggedIn()) {
                 handleFetchInspectionData(responseData);
                 modifyLogin(true)
+                window.location.href = "user.html";
             } else {
                 handleFetchInspectionData({message: "You have already logged in"});
             }
@@ -234,7 +239,7 @@ const restaurantList = document.getElementById('restaurant-list');
 const applyButton = document.getElementById("applyButton");
 const displayFormButton = document.getElementById('displayFormButton');
 const hiddenForm = document.getElementById('hiddenForm');
-const loginButton = document.getElementById('loginButton')
+const signinButton = document.getElementById('signin-btn')
 const signupButton = document.getElementById('signup-button')
 let isResultsTableVisible = true;
 let loggedIn = false;
@@ -307,9 +312,20 @@ displayFormButton.addEventListener('click', () => {
     }
 });
 
-loginButton.addEventListener("click", async (event) => {
+signinButton.addEventListener("click", async (event) => {
+    debugger
     event.preventDefault();
-    fetchLogin();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    if (email && password) {
+        const userData = {
+            email,
+            password
+        };
+        await fetchLogin(userData);
+    }  else {
+        handleFetchInspectionData({message: "You have fill in all fields"})
+    }
 });
 
 signupButton.addEventListener("click", async (event) => {

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modify Page</title>
+    <link rel="stylesheet" href="toastify.min.css">
+    <style>
+        .active {
+            display: block;
+        }
+        .form-element {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div id="modify-page">
+    <h2>Modify Establishments List</h2>
+    <div class="form-element">
+        <label for="establishments-list">Establishments List</label>
+        <textarea id="establishments-list" rows="4"></textarea>
+    </div>
+    <button id="modify-button">Modify List</button>
+    <h2>Upload Profile Photo</h2>
+    <div class="form-element">
+        <label for="profile-photo">Profile Photo</label>
+        <input type="file" id="profile-photo" accept="image/jpeg, image/png">
+    </div>
+    <button id="upload-button">Upload Photo</button>
+</div>
+
+<script src="toastify.min.js"></script>
+<script src="modify.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import yaml
 import smtplib
 import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify, Response
+from flask import Flask, request, redirect, render_template, jsonify, Response, url_for
 from flask_restx import ValidationError
 
 from backend import lawsuit_model
@@ -356,10 +356,23 @@ def delete_lawsuits(etablissement):
         return jsonify({"message": f"Failed to delete lawsuits for establishment {etablissement}."}), 500
 
 
-@app.route("/login")
-@auth_required
+@app.route("/user", methods=['POST'])
+def user():
+    return render_template("Frontend/user.html")
+
+
+@app.route("/login", methods=['POST'])
 def login():
-    return jsonify({"message": f"You have successfully logged in"})
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    user = user_model.User.query.filter_by(email=email).first()
+
+    if user and user.password == password:
+        # return jsonify({"message": "You have successfully logged in"})
+        return redirect(url_for("user"), code=307)
+    else:
+        return jsonify({"error": f"Invalid email or password"}), 400
 
 
 @app.route("/users/create", methods=['POST'])
