@@ -812,4 +812,3 @@ restaurants.forEach((restaurant) => {
     restList.appendChild(option);
 });
 
-

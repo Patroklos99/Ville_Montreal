@@ -278,3 +278,52 @@ hr {
     text-decoration: none;
     font-weight: 600;
 }
+
+.center-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-container-user {
+    display: flex;
+    align-items: center;
+}
+
+.modify-user {
+    margin-left: 10px;
+    padding: 8px 16px; /* Increase the padding to adjust the button size */
+    font-size: 16px; /* Increase the font size */
+}
+
+.form-element label {
+    margin-right: 10px; /* Add margin-right to create space between label and input */
+    font-size: 18px;
+}
+
+#establishments-signup-user {
+    width: 88%;
+    font-size: 18px;
+}
+
+#establishments-input-user {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#dm-criteria-options-user {
+    font-size: 18px;
+}
+
+#establishments-input-user {
+    font-size: 18px;
+}
+
+#applyButton-user {
+    padding: 8px 16px; /* Increase the padding to adjust the button size */
+    font-size: 16px; /* Increase the font size */
+}
+
+

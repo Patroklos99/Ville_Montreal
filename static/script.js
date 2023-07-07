@@ -183,27 +183,30 @@ async function fetchLogin(data) {
         const response = await fetch(`/login`, {
             method: 'POST',
             headers: {
-                'Content-Type' : 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         });
 
+        // if (response.redirected) {
+        //     window.location.href = response.url; // Redirect to the specified URL
         if (response.ok) {
-            const responseData = await response.json();
+            // const responseData = await response.json();
             if (!isLoggedIn()) {
-                handleFetchInspectionData(responseData);
-                modifyLogin(true)
-                window.location.href = "user.html";
+                // handleFetchInspectionData(responseData);
+                modifyLogin(true);
+                window.location.href = "/user"; // Redirect to the user.html page
             } else {
-                handleFetchInspectionData({message: "You have already logged in"});
+                handleFetchInspectionData({ message: "You have already logged in" });
             }
         } else {
-            console.log('Error occurred during modifyLawsuits');
+            console.log('Error occurred during login');
         }
     } catch (error) {
         console.error('Error', error);
     }
 }
+
 
 async function fetchDataUser(userData) {
     debugger
@@ -329,9 +332,10 @@ signinButton.addEventListener("click", async (event) => {
 });
 
 signupButton.addEventListener("click", async (event) => {
+    debugger
     const full_name = document.getElementById('nom-signup').value;
     const email = document.getElementById('email-signup').value;
-    const establishments = document.getElementById('establishments-signup').value;
+    const establishments = document.getElementById('establishments-input').value;
     const password = document.getElementById('password-signup').value;
 
     if (full_name && email && establishments && password) {

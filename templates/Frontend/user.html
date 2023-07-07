@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Modify Page</title>
-    <link rel="stylesheet" href="toastify.min.css">
-    <style>
-        .active {
-            display: block;
-        }
-        .form-element {
-            margin: 10px 0;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Lawsuitszz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
-<div id="modify-page">
-    <h2>Modify Establishments List</h2>
+
+<div id="modify-page" class="center-user">
+    <h2>Welcome, {{ user.email }}</h2>
+    <h3>Your followed Establishments</h3>
+    <ul>
+        {% for establishment in establishments %}
+        <li>{{ establishment }}</li>
+        {% endfor %}
+    </ul>
+    <h1>Modify Establishments List</h1>
     <div class="form-element">
-        <label for="establishments-list">Establishments List</label>
-        <textarea id="establishments-list" rows="4"></textarea>
+        <label for="establishments-signup-user">Monitored Establishments</label>
+        <select id="establishments-signup-user">
+            <option value="">Select an establishment</option>
+            <!-- Options will be dynamically added here -->
+        </select>
+        <div class="input-container-user">
+            <label for="dm-criteria-options-user">Action:</label>
+            <select id="dm-criteria-options-user" name="dm-search-criteria">
+                <option value="Modify">Modify</option>
+                <option value="Delete">Delete</option>
+            </select>
+            <input type="text" id="establishments-input-user" name="establishments">
+<!--            <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">-->
+            <button id="applyButton-user" type="submit">Apply</button>
+        </div>
     </div>
-    <button id="modify-button">Modify List</button>
     <h2>Upload Profile Photo</h2>
     <div class="form-element">
         <label for="profile-photo">Profile Photo</label>
@@ -28,7 +42,7 @@
     <button id="upload-button">Upload Photo</button>
 </div>
 
-<script src="toastify.min.js"></script>
-<script src="modify.js"></script>
+<script src="{{ url_for('static', filename='drop_down_user.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 </html>

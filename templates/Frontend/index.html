@@ -24,7 +24,11 @@
         </div>
         <div class="form-element">
             <label for="establishments-signup">Monitored Establishments</label>
-            <input type="text" id="establishments-signup" placeholder="Enter establishments (comma-separated)">
+            <select id="establishments-signup">
+                <option value="">Select an establishment</option>
+                <!-- Options will be dynamically added here -->
+            </select>
+            <input type="text" id="establishments-input" name="establishments">
         </div>
         <div class="form-element">
             <label for="password-signup">Password</label>
@@ -35,7 +39,6 @@
         </div>
     </div>
 </div>
-
 
 
 <div class="popup">
@@ -78,8 +81,8 @@
             </select>
             <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
             <button type="submit">Search</button>
-<!--            <div class="center">-->
-<!--            </div>-->
+            <!--            <div class="center">-->
+            <!--            </div>-->
         </div>
     </form>
 
@@ -87,7 +90,6 @@
     <button id="displayFormButton">Display Form</button>
 </div>
 <div id="resultsContainer"></div>
-
 
 
 <div id="hiddenForm" style="display: none;">

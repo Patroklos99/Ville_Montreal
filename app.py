@@ -4,9 +4,10 @@ import yaml
 import smtplib
 import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify, Response, url_for
+from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session
 from flask_restx import ValidationError
 
+from datetime import datetime
 from backend import lawsuit_model
 from backend.database import db
 from backend import user_model
@@ -47,6 +48,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{"/home/wallaby/IdeaProjects
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['JSON_AS_ASCII'] = False
+app.config['SECRET_KEY'] = 'a21312mkldas23423oa'  # Set a secret key for the session
+app.config['SESSION_TYPE'] = 'filesystem'  # Use filesystem-based session storage
 db.init_app(app)
 
 with app.app_context():
@@ -356,12 +359,16 @@ def delete_lawsuits(etablissement):
         return jsonify({"message": f"Failed to delete lawsuits for establishment {etablissement}."}), 500
 
 
-@app.route("/user", methods=['POST'])
-def user():
-    return render_template("Frontend/user.html")
+@app.route("/user")
+def get_user():
+    email = session.get('email')
+    user = user_model.User.query.filter_by(email=email).first()
+    establishments = user.establishments.split(",") if user.establishments else []
+    timestamp = int(datetime.now().timestamp())
+    return render_template("Frontend/user.html", user=user, establishments=establishments, timestamp=timestamp)
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     data = request.get_json()
     email = data.get('email')
@@ -370,7 +377,8 @@ def login():
 
     if user and user.password == password:
         # return jsonify({"message": "You have successfully logged in"})
-        return redirect(url_for("user"), code=307)
+        session['email'] = email  # Set the email in the session
+        return redirect(url_for("get_user"))
     else:
         return jsonify({"error": f"Invalid email or password"}), 400
 
@@ -402,6 +410,13 @@ def create_user():
         return jsonify({'message': 'User created successfully'}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route("/establishments")
+def get_establishments():
+    establishments = lawsuit_model.Lawsuit.query.with_entities(lawsuit_model.Lawsuit.etablissement).distinct().all()
+    establishment_names = [est[0] for est in establishments]
+    return jsonify({"establishments": establishment_names})
 
 
 if __name__ == '__main__':
