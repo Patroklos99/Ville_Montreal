@@ -35,7 +35,7 @@ function renderEstablishmentsDropdown(establishments) {
 }
 
 function addEstablishmentToInput(establishment) {
-    establishmentsInput.value = " " + establishment;
+    establishmentsInput.value = establishment;
 }
 
 function clearEstablishmentsDropdown() {

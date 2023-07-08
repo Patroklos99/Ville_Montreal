@@ -419,6 +419,67 @@ def get_establishments():
     return jsonify({"establishments": establishment_names})
 
 
+@app.route("/user_establishments/<string:etablissement>", methods=["POST", "DELETE"])
+def update_or_delete_establishment(etablissement):
+    if request.method == "POST":
+        return add_establishment(etablissement)
+    elif request.method == "DELETE":
+        return delete_establishment(etablissement)
+    else:
+        return jsonify({"message": "Method not allowed."}), 405
+
+
+def add_establishment(etablissement):
+    email = session.get("email")
+
+    try:
+        user = user_model.User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"message": "User not found."}), 404
+
+        establishments = user.establishments.split(",") if user.establishments else []
+
+        if etablissement in establishments:
+            return jsonify({"message": f"Establishment {etablissement} already exists."}), 400
+
+        isInDB = lawsuit_model.Lawsuit.query.filter_by(etablissement=etablissement).first()
+
+        if not isInDB:
+            return jsonify({"message": f"Establishment {etablissement} provided is not valid."}), 400
+
+
+        establishments.append(etablissement)
+        user.establishments = ",".join(establishments)
+        db.session.commit()
+
+        return jsonify({"establishments": establishments})
+        # return jsonify({"message": f"New establishment {etablissement} added successfully."})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Failed to add new establishment."}), 500
+
+
+def delete_establishment(etablissement):
+    email = session.get("email")
+
+    try:
+        user = user_model.User.query.filter_by(email=email).first()
+        establishments = user.establishments.split(",") if user.establishments else []
+
+        if etablissement in establishments:
+            establishments.remove(etablissement)
+            user.establishments = ",".join(establishments)
+            db.session.commit()
+            return jsonify({"establishments": establishments})
+        else:
+            return jsonify({"message": f"Establishment {etablissement} not found."}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Failed to delete establishment {etablissement}."}), 500
+
+
 if __name__ == '__main__':
     job_schedule()
     app.run()

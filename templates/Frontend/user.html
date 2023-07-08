@@ -11,7 +11,7 @@
 <div id="modify-page" class="center-user">
     <h2>Welcome, {{ user.email }}</h2>
     <h3>Your followed Establishments</h3>
-    <ul>
+    <ul id="establishments-list">
         {% for establishment in establishments %}
         <li>{{ establishment }}</li>
         {% endfor %}
@@ -24,9 +24,8 @@
             <!-- Options will be dynamically added here -->
         </select>
         <div class="input-container-user">
-            <label for="dm-criteria-options-user">Action:</label>
             <select id="dm-criteria-options-user" name="dm-search-criteria">
-                <option value="Modify">Modify</option>
+                <option value="Modify">Ajouter</option>
                 <option value="Delete">Delete</option>
             </select>
             <input type="text" id="establishments-input-user" name="establishments">
@@ -35,14 +34,15 @@
         </div>
     </div>
     <h2>Upload Profile Photo</h2>
-    <div class="form-element">
-        <label for="profile-photo">Profile Photo</label>
+    <div class="form-element-image">
         <input type="file" id="profile-photo" accept="image/jpeg, image/png">
+        <img id="uploaded-image" style="display: none;">
     </div>
     <button id="upload-button">Upload Photo</button>
 </div>
 
 <script src="{{ url_for('static', filename='drop_down_user.js')}}"></script>
+<script src="{{ url_for('static', filename='user.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 </html>

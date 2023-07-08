@@ -21,5 +21,6 @@ CREATE TABLE users
     full_name      VARCHAR(255) NOT NULL,
     email          VARCHAR(255) NOT NULL,
     establishments TEXT,
-    password       VARCHAR(255) NOT NULL
+    password       VARCHAR(255) NOT NULL,
+    profile_photo  BLOB
 );
