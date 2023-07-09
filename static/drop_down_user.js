@@ -1,11 +1,14 @@
 const establishmentsDropdown = document.getElementById("establishments-signup-user");
 const establishmentsInput = document.getElementById("establishments-input-user");
 const buttonApply = document.getElementById("uploaded-image")
+
 // Fetch and render all establishments on page load
 window.addEventListener("DOMContentLoaded", async () => {
+    debugger
     const establishments = await fetchEstablishments();
     renderEstablishmentsDropdown(establishments);
     establishmentsInput.value = "";
+    await fetchProfilePhoto();
 });
 
 establishmentsDropdown.addEventListener("change", (event) => {
@@ -41,4 +44,20 @@ function addEstablishmentToInput(establishment) {
 
 function clearEstablishmentsDropdown() {
     establishmentsDropdown.innerHTML = "";
+}
+
+// Function to fetch and display the profile photo
+async function fetchProfilePhoto() {
+    debugger
+    try {
+        const response = await fetch("/profile-photo-endpoint"); // Replace with your actual endpoint URL
+        if (response.ok) {
+            const imageData = await response.json();
+            const image = document.getElementById("uploaded-image");
+            image.src = imageData.imageUrl;
+            image.style.display = "block";
+        }
+    } catch (error) {
+        console.error("Error", error);
+    }
 }

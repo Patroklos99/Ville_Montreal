@@ -4,8 +4,10 @@ document.querySelector("#show-login").addEventListener("click", function () {
     document.querySelector(".popup").classList.add("active");
     if (document.querySelector("#hiddenForm").style.display === "block") {
         lastForm = "hiddenForm";
-    } else {
+    } else if (document.querySelector("#inspection-form").style.display === "block") {
         lastForm = "inspection-form"
+    } else {
+        lastForm = ""
     }
     document.querySelector("#hiddenForm").style.display = "none";
     document.querySelector("#inspection-form").style.display = "none"; // Hide the inspection form
@@ -41,7 +43,7 @@ function showLastForm(lastform) {
     if (lastform === "hiddenForm") {
         document.querySelector("#hiddenForm").style.display = "block";
         document.querySelector("#inspection-form").style.display = "none"; // hide the inspection form
-    } else {
+    } else if (lastform === "inspection-form"){
         document.querySelector("#inspection-form").style.display = "block"; // hide the inspection form
         document.querySelector("#hiddenForm").style.display = "none";
     }
@@ -233,6 +235,7 @@ async function fetchLogin(data) {
                 handleMessageResponse({message: "You have already logged in"});
             }
         } else {
+            handleMessageResponse({error: "The password or email are invalid"})
             console.log('Error occurred during login');
         }
     } catch (error) {
@@ -266,7 +269,7 @@ async function fetchDataUser(userData) {
     }
 }
 
-
+debugger
 // const searchForm = document.getElementById('searchForm');
 const searchFormD = document.getElementById('searchFormDate');
 const closeButton = document.getElementById('closeButton');
@@ -279,6 +282,7 @@ const signinButton = document.getElementById('signin-btn')
 const signupButton = document.getElementById('signup-button')
 const inspectionRequestButton = document.getElementById("inspectionFormBtn");
 const inspectionForm = document.getElementById("inspection-form");
+const establishmentsInputLogin = document.getElementById("establishments-input");
 let isResultsTableVisible = true;
 let loggedIn = false;
 
@@ -429,4 +433,43 @@ function handleMessageResponse(data) {
     } else {
         console.log("Invalid response data");
     }
+}
+
+window.addEventListener("DOMContentLoaded", async () => {
+    establishmentsInputLogin.value = "";
+    debugger
+    const establishments = await fetchEstablishmentsLogin();
+    renderEstablishmentsDropdownLogin(establishments);
+
+    const establishmentsDropdownLogin = document.getElementById("establishments-signup");
+
+    establishmentsDropdownLogin.addEventListener("change", (event) => {
+        const selectedEstablishment = event.target.value;
+        addEstablishmentToInputLogin(selectedEstablishment);
+    });
+});
+
+async function fetchEstablishmentsLogin() {
+    const response = await fetch(`/establishments`);
+    const data = await response.json();
+    return data.establishments.sort();
+}
+
+function renderEstablishmentsDropdownLogin(establishments) {
+    const dropdown = document.getElementById("establishments-signup");
+
+    // Clear existing options
+    dropdown.innerHTML = "";
+
+    // Create a new option for each establishment
+    establishments.forEach((establishment) => {
+        const option = document.createElement("option");
+        option.value = establishment;
+        option.textContent = establishment;
+        dropdown.appendChild(option);
+    });
+}
+
+function addEstablishmentToInputLogin(establishment) {
+    establishmentsInputLogin.value += establishment + ", ";
 }

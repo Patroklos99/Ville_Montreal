@@ -805,7 +805,6 @@ const restaurants = [
 const restList = document.getElementById("restaurant-list");
 
 restaurants.forEach((restaurant) => {
-    debugger
     const option = document.createElement("option");
     option.value = restaurant;
     option.textContent = restaurant;

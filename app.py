@@ -6,7 +6,7 @@ import smtplib
 import dicttoxml
 import json
 
-from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session
+from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session, send_file
 from flask_restx import ValidationError
 
 from datetime import datetime
@@ -504,6 +504,24 @@ def upload_photo():
         return jsonify({"imageUrl": data_url})
     else:
         return jsonify({"error": "No file received."}), 400
+
+
+@app.route('/profile-photo-endpoint')
+def get_profile_photo():
+    email = session.get("email")
+    user = user_model.User.query.filter_by(email=email).first()
+    if user and user.profile_photo:
+        # Construct the data URL for the image
+        encoded_data = base64.b64encode(user.profile_photo).decode("utf-8")
+        data_url = "data:image/jpeg;base64," + encoded_data
+
+        # Return the data URL
+
+        return jsonify({"imageUrl": data_url})
+
+    # If the user does not have a profile photo, return the URL of the default photo
+    default_photo_url = url_for('static', filename='images/Default_pfp.svg.png')
+    return jsonify({"imageUrl": default_photo_url})
 
 
 if __name__ == '__main__':
