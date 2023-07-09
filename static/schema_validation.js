@@ -1,6 +1,6 @@
 
-const inspectionForm = document.getElementById('inspection-form');
-inspectionForm.addEventListener('submit', (event) => {
+const inspectionFormn = document.getElementById('inspection-form');
+inspectionFormn.addEventListener('submit', (event) => {
     debugger
     event.preventDefault(); // Prevent the form from submitting normally
 

@@ -10,12 +10,17 @@
 
 <div id="modify-page" class="center-user">
     <h2>Welcome, {{ user.email }}</h2>
+    <div class="image-container">
+        <h2>Profil Picture:</h2>
+        <img id="uploaded-image" style="display: none;">
+    </div>
     <h3>Your followed Establishments</h3>
     <ul id="establishments-list">
         {% for establishment in establishments %}
         <li>{{ establishment }}</li>
         {% endfor %}
     </ul>
+
     <h1>Modify Establishments List</h1>
     <div class="form-element">
         <label for="establishments-signup-user">Monitored Establishments</label>
@@ -29,14 +34,12 @@
                 <option value="Delete">Delete</option>
             </select>
             <input type="text" id="establishments-input-user" name="establishments">
-<!--            <input type="text" id="md-search-input" name="search-input" placeholder="Establishment name">-->
             <button id="applyButton-user" type="submit">Apply</button>
         </div>
     </div>
     <h2>Upload Profile Photo</h2>
     <div class="form-element-image">
         <input type="file" id="profile-photo" accept="image/jpeg, image/png">
-        <img id="uploaded-image" style="display: none;">
     </div>
     <button id="upload-button">Upload Photo</button>
 </div>

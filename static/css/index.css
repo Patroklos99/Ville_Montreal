@@ -22,9 +22,30 @@ body {
     margin-bottom: 20px;
 }
 
-#displayFormButton {
+#inspection-form {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+
+}
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Add gap between the buttons */
+}
+
+#displayFormBtn,
+#inspectionFormBtn {
+    flex: 1; /* Make the buttons share equal width */
     font-size: 18px; /* Increase the font size */
+    padding: 10px 20px; /* Add padding to increase button size */
 }
 
 #lawsuits {
@@ -44,7 +65,7 @@ body {
     margin-left: 10px;
 }
 
-#searchTitle {
+#searchTitle, #searchtitleInspection {
     text-align: center;
 }
 
@@ -349,5 +370,19 @@ scale(1);
     flex-direction: column;
     align-items: center;
     width: 300px; /* Adjust the width as per your requirements */
-    margin-bottom: 20px; /* Adjust the margin as per your requirements */
+    margin-bottom: 10px; /* Adjust the margin as per your requirements */
+}
+
+.image-container {
+    position: fixed;
+    top: 10px;
+    right: 380px;
+}
+
+#uploaded-image {
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding: 2px;
 }

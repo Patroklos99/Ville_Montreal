@@ -1,8 +1,10 @@
+import base64
 import csv
 import requests
 import yaml
 import smtplib
 import dicttoxml
+import json
 
 from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session
 from flask_restx import ValidationError
@@ -447,7 +449,6 @@ def add_establishment(etablissement):
         if not isInDB:
             return jsonify({"message": f"Establishment {etablissement} provided is not valid."}), 400
 
-
         establishments.append(etablissement)
         user.establishments = ",".join(establishments)
         db.session.commit()
@@ -478,6 +479,31 @@ def delete_establishment(etablissement):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Failed to delete establishment {etablissement}."}), 500
+
+
+@app.route("/upload-photo", methods=["POST"])
+def upload_photo():
+    file = request.files.get("photo")
+    email = session.get("email")
+
+    if file:
+        file_data = file.read()
+
+        # Check if the user already has a profile photo
+        user = user_model.User.query.filter_by(email=email).first()
+
+        # Update the user's profile photo in the database
+        user.profile_photo = file_data
+        db.session.commit()
+
+        # Construct the data URL for the image
+        encoded_data = base64.b64encode(file_data).decode("utf-8")
+        data_url = "data:image/jpeg;base64," + encoded_data
+
+        # Return the data URL
+        return jsonify({"imageUrl": data_url})
+    else:
+        return jsonify({"error": "No file received."}), 400
 
 
 if __name__ == '__main__':

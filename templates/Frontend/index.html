@@ -86,7 +86,10 @@
     </form>
 
     <button id="show-login">Login</button>
-    <button id="displayFormButton">Display Form</button>
+    <div clas="button-container">
+        <button id="displayFormBtn">Display Form</button>
+        <button id="inspectionFormBtn">Inspection Form</button>
+    </div>
 </div>
 <div id="resultsContainer"></div>
 
@@ -131,31 +134,33 @@
         <div id="resultsTable"></div>
     </div>
 </div>
-<form id="inspection-form">
-    <label for="establishment">Nom de l'établissement:</label>
-    <input type="text" id="establishment" required>
 
-    <label for="address">Adresse:</label>
-    <input type="text" id="address" required>
+<div class="form-container">
+    <form id="inspection-form" style="display: none;">
+        <h1 id="searchtitleInspection">Demande d'Inspection</h1>
+        <label for="establishment">Nom de l'établissement:</label>
+        <input type="text" id="establishment" required>
 
-    <label for="city">Ville:</label>
-    <input type="text" id="city" required>
+        <label for="address">Adresse:</label>
+        <input type="text" id="address" required>
 
-    <label for="visit-date">Date de la visite:</label>
-    <input type="date" id="visit-date" required>
+        <label for="city">Ville:</label>
+        <input type="text" id="city" required>
 
-    <label for="client-name">Nom du client:</label>
-    <input type="text" id="client-name" required>
+        <label for="visit-date">Date de la visite:</label>
+        <input type="date" id="visit-date" required>
 
-    <label for="client-surname">Prénom du client:</label>
-    <input type="text" id="client-surname" required>
+        <label for="client-name">Nom du client:</label>
+        <input type="text" id="client-name" required>
 
-    <label for="description">Description du problème:</label>
-    <textarea id="description" required></textarea>
-    <button type="submit">Envoyer la demande</button>
-</form>
+        <label for="client-surname">Prénom du client:</label>
+        <input type="text" id="client-surname" required>
 
-<div id="resultSchema"></div>
+        <label for="description">Description du problème:</label>
+        <textarea id="description" required></textarea>
+        <button type="submit">Envoyer la demande</button>
+    </form>
+</div>
 
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>

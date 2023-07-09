@@ -1,6 +1,6 @@
 const establishmentsDropdown = document.getElementById("establishments-signup-user");
 const establishmentsInput = document.getElementById("establishments-input-user");
-
+const buttonApply = document.getElementById("uploaded-image")
 // Fetch and render all establishments on page load
 window.addEventListener("DOMContentLoaded", async () => {
     const establishments = await fetchEstablishments();
@@ -24,6 +24,7 @@ function renderEstablishmentsDropdown(establishments) {
 
     // Clear existing options
     dropdown.innerHTML = "";
+    buttonApply.value = "";
 
     // Create a new option for each establishment
     establishments.forEach((establishment) => {

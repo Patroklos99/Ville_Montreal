@@ -1,19 +1,52 @@
+let lastForm = "";
 document.querySelector("#show-login").addEventListener("click", function () {
+    debugger
     document.querySelector(".popup").classList.add("active");
+    if (document.querySelector("#hiddenForm").style.display === "block") {
+        lastForm = "hiddenForm";
+    } else {
+        lastForm = "inspection-form"
+    }
+    document.querySelector("#hiddenForm").style.display = "none";
+    document.querySelector("#inspection-form").style.display = "none"; // Hide the inspection form
+
+});
+
+document.querySelector("#show-signup").addEventListener("click", function () {
+    debugger
+    document.querySelector(".popup-signup").classList.add("active");
+    document.querySelector(".popup").classList.remove("active");
+    document.querySelector("#hiddenForm").style.display = "none";
+    document.querySelector("#inspection-form").style.display = "none"; // Hide the inspection form
 });
 
 document.querySelector(".popup .close-btn").addEventListener("click", function () {
+    debugger
     document.querySelector(".popup").classList.remove("active");
-})
-
-document.querySelector("#show-signup").addEventListener("click", function () {
-    document.querySelector(".popup-signup").classList.add("active");
-    document.querySelector(".popup").classList.remove("active");
+    if (!document.querySelector(".popup-signup").classList.contains("active")) {
+        showLastForm(lastForm);
+    }
 });
 
 document.querySelector(".popup-signup .close-btn").addEventListener("click", function () {
+    debugger
     document.querySelector(".popup-signup").classList.remove("active");
+    if (!document.querySelector(".popup").classList.contains("active")) {
+        showLastForm(lastForm);
+    }
 });
+
+function showLastForm(lastform) {
+    debugger
+    if (lastform === "hiddenForm") {
+        document.querySelector("#hiddenForm").style.display = "block";
+        document.querySelector("#inspection-form").style.display = "none"; // hide the inspection form
+    } else {
+        document.querySelector("#inspection-form").style.display = "block"; // hide the inspection form
+        document.querySelector("#hiddenForm").style.display = "none";
+    }
+}
+
 
 async function fetchDataForDate(date1, date2) {
     try {
@@ -150,7 +183,7 @@ async function fetchModifyLawsuits(etablissement) {
 
         if (response.ok) {
             const responseData = await response.json();
-            handleFetchInspectionData(responseData);
+            handleMessageResponse(responseData);
         } else {
             console.log('Error occurred during modifyLawsuits');
         }
@@ -168,7 +201,7 @@ async function fetchDeleteLawsuits(etablissement) {
 
         if (response.ok) {
             const responseData = await response.json();
-            handleFetchInspectionData(responseData);
+            handleMessageResponse(responseData);
         } else {
             console.log('Error occurred during deleteLawsuits');
         }
@@ -197,7 +230,7 @@ async function fetchLogin(data) {
                 modifyLogin(true);
                 window.location.href = "/user"; // Redirect to the user.html page
             } else {
-                handleFetchInspectionData({ message: "You have already logged in" });
+                handleMessageResponse({message: "You have already logged in"});
             }
         } else {
             console.log('Error occurred during login');
@@ -221,11 +254,11 @@ async function fetchDataUser(userData) {
 
         if (response.ok) {
             const responseData = await response.json();
-            handleFetchInspectionData(responseData);
+            handleMessageResponse(responseData);
             document.querySelector(".popup-signup").classList.remove("active");
         } else {
             const erroResponseData = await response.json();
-            handleFetchInspectionData(erroResponseData);
+            handleMessageResponse(erroResponseData);
             // document.querySelector(".popup-signup").classList.add("active-sign");
         }
     } catch (error) {
@@ -240,10 +273,12 @@ const closeButton = document.getElementById('closeButton');
 const resultsTable = document.getElementById('resultsTable');
 const restaurantList = document.getElementById('restaurant-list');
 const applyButton = document.getElementById("applyButton");
-const displayFormButton = document.getElementById('displayFormButton');
+const displayFormButton = document.getElementById('displayFormBtn');
 const hiddenForm = document.getElementById('hiddenForm');
 const signinButton = document.getElementById('signin-btn')
 const signupButton = document.getElementById('signup-button')
+const inspectionRequestButton = document.getElementById("inspectionFormBtn");
+const inspectionForm = document.getElementById("inspection-form");
 let isResultsTableVisible = true;
 let loggedIn = false;
 
@@ -263,6 +298,8 @@ function handleSearchFormSubmit(event) {
         fetchDataForDate(date1, date2);
         resultsTable.style.display = 'block';
         isResultsTableVisible = true;
+    } else if (!date1 || !date2) {
+        handleMessageResponse({error: "Choose a date"})
     }
 
     const modifyDeleteForm = document.querySelector('.dm-criteria');
@@ -292,7 +329,7 @@ applyButton.addEventListener('click', async (event) => {
     const searchInputValue = document.getElementById("md-search-input").value;
 
     if (!isLoggedIn()) {
-        handleFetchInspectionData({message: "You have to log in first"});
+        handleMessageResponse({message: "You have to log in first"});
         return;
     }
 
@@ -307,14 +344,6 @@ applyButton.addEventListener('click', async (event) => {
     }
 });
 
-displayFormButton.addEventListener('click', () => {
-    if (hiddenForm.style.display === 'none' || hiddenForm.style.display === '') {
-        hiddenForm.style.display = 'block';
-    } else {
-        hiddenForm.style.display = 'none';
-    }
-});
-
 signinButton.addEventListener("click", async (event) => {
     debugger
     event.preventDefault();
@@ -326,8 +355,8 @@ signinButton.addEventListener("click", async (event) => {
             password
         };
         await fetchLogin(userData);
-    }  else {
-        handleFetchInspectionData({message: "You have fill in all fields"})
+    } else {
+        handleMessageResponse({message: "You have fill in all fields"})
     }
 });
 
@@ -347,7 +376,7 @@ signupButton.addEventListener("click", async (event) => {
         };
         await fetchDataUser(userData);
     } else {
-        handleFetchInspectionData({message: "You have to fill in all the inputs"});
+        handleMessageResponse({message: "You have to fill in all the inputs"});
     }
 })
 
@@ -359,3 +388,45 @@ function modifyLogin(status) {
     loggedIn = status;
 }
 
+displayFormButton.addEventListener('click', () => {
+    if (hiddenForm.style.display === 'none' || hiddenForm.style.display === '') {
+        hiddenForm.style.display = 'block';
+        inspectionForm.style.display = 'none'; // Hide the inspection form
+    } else {
+        hiddenForm.style.display = 'none';
+    }
+});
+
+inspectionRequestButton.addEventListener("click", function () {
+    if (inspectionForm.style.display === "none") {
+        inspectionForm.style.display = "block";
+        hiddenForm.style.display = 'none'; // Hide the display form
+    } else {
+        inspectionForm.style.display = "none";
+    }
+});
+
+function handleMessageResponse(data) {
+    debugger
+    if (data && data.error) {
+        // Show error message
+        Toastify({
+            text: data.error,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            backgroundColor: "#ff6b6b" // Set custom background color for error messages
+        }).showToast();
+    } else if (data && data.message) {
+        // Show success message
+        Toastify({
+            text: data.message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            backgroundColor: "#6bd9a8" // Set custom background color for success messages
+        }).showToast();
+    } else {
+        console.log("Invalid response data");
+    }
+}

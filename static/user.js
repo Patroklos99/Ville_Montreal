@@ -120,6 +120,7 @@ const fileInput = document.getElementById("profile-photo");
 const uploadedImage = document.getElementById("uploaded-image");
 
 async function fetchPhotoData(file) {
+    debugger
     const formData = new FormData();
     formData.append("photo", file)
     try {
@@ -131,6 +132,8 @@ async function fetchPhotoData(file) {
             const dataResponse = await response.json();
             handleFetchUploadResponse(dataResponse)
         } else {
+            const badResponse = await response.json()
+            handleFetchDataUser(badResponse)
             console.log("Error occurred during photo upload.");
         }
     } catch (error) {
@@ -139,16 +142,17 @@ async function fetchPhotoData(file) {
 }
 
 function handleFetchUploadResponse(responseData) {
-    if (responseData && responseData.imageUrl) {
+    debugger
+    if (responseData) {
         // Handle success, e.g., display the uploaded image
         uploadedImage.src = responseData.imageUrl;
         uploadedImage.style.display = "block";
-    } else {
-        console.log("Invalid response data");
+
     }
 }
 
-uploadedImage.addEventListener("click", (event) => {
+uploadButton.addEventListener("click", (event) => {
+    debugger
     const file = fileInput.files[0]; // Get the selected file
     if (!file) {
         handleFetchDataUser({message: `Please add a valid file`})
