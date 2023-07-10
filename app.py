@@ -545,5 +545,3 @@ def get_profile_photo():
 if __name__ == '__main__':
     job_schedule()
     app.run()
-    # user_model.User = user_model.User
-    # lawsuit_model.Lawsuit = lawsuit_model.Lawsuit
