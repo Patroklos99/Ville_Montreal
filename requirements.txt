@@ -1,0 +1,6 @@
+Flask==2.3.2
+Flask-RESTX==1.1.0
+Flask-Swagger-UI==4.11.1
+APScheduler==3.10.1
+PyYAML==6.0
+jsonschema==4.17.3

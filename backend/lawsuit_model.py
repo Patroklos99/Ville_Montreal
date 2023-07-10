@@ -1,4 +1,4 @@
-from app import db
+from backend.database import db
 
 
 class Lawsuit(db.Model):

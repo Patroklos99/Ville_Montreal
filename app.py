@@ -4,14 +4,13 @@ import requests
 import yaml
 import smtplib
 import dicttoxml
-import json
 
-from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session, send_file
+from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session
 from flask_restx import ValidationError
 
+from backend.database import db
 from datetime import datetime
 from backend import lawsuit_model
-from backend.database import db
 from backend import user_model
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -20,7 +19,7 @@ from email.mime.multipart import MIMEMultipart
 from utils import auth_required
 
 from jsonschema import validate
-from json_schema import inspection_schema, user_schema
+from json_schema import inspection_schema
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_prefixed_env()
