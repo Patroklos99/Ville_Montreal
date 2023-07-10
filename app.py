@@ -244,6 +244,9 @@ def update_db():
             )
             db.session.add(new_record)
 
+        # Commit the changes to the database
+        db.session.commit()
+
         # Send email with the list of new violations
     if new_violations:
         email_recipient = get_email_recipient()
@@ -251,8 +254,24 @@ def update_db():
         email_body = '\n'.join([f'- {violation["description"]}' for violation in new_violations])
 
         send_email(email_recipient, email_subject, email_body)
-    # Commit the changes to the database
-    db.session.commit()
+
+    # Notify users of new violations
+    if new_violations:
+        establishments = set(lawsuit['etablissement'] for lawsuit in new_violations)
+        for establishment in establishments:
+            notify_users_of_new_violation(establishment)
+
+
+def notify_users_of_new_violation(establishment):
+    users = user_model.User.query.filter(user_model.User.establishments.ilike(f"%{establishment}%")).all()
+
+    for user in users:
+        email = user.email
+        subject = f"New Violation Detected at {establishment}"
+        body = f"Dear {user.full_name},\n\nA new violation has been detected at {establishment}.\n\nPlease take " \
+               f"appropriate action.\n\nRegards,\nThe Monitoring System"
+
+        send_email(email, subject, body)
 
 
 def send_email(recipient, subject, body):
