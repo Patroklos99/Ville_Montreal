@@ -14,7 +14,7 @@
 [//]: # (![Bootstrap]&#40;https://img.shields.io/badge/CSS-Bootstrap-7952B3?style=flat&logo=Bootstrap&logoColor=white&#41;)
 
 #### Auteur : Yours truly
-#### Misc : All requirements below have been implemented. Plain CSS, Bootstrap will be added later
+#### Misc : All requirements below have been implemented. Plain CSS,ciw Bootstrap will be added later
 
 ## **📝 Titre et description du projet**
 
@@ -306,8 +306,7 @@ Toute la documentation des services REST sera disponible à la route `/doc` en u
 ## 🚀 Déploiement sur PyhtonAnyWhere
 
 L'API est aussi disponible
-sur [pythonanywhere](http://elfiDev.pythonanywhere.com/).
-Cliquez sur le lien pour accéder au site.
+sur [pythonanywhere]() (TODO). 
 Veuillez noter que la version de déploiement n'est pas faite pour le test.
 
 ### 📜 Autres informations
