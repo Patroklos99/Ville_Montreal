@@ -14,7 +14,7 @@
 [//]: # (![Bootstrap]&#40;https://img.shields.io/badge/CSS-Bootstrap-7952B3?style=flat&logo=Bootstrap&logoColor=white&#41;)
 
 #### Auteur : Yours truly
-#### Misc : All requirements below have been implemented 
+#### Misc : All requirements below have been implemented. Plain CSS, Bootstrap will be added later
 
 ## **📝 Titre et description du projet**
 
