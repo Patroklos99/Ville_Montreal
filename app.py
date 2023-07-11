@@ -5,15 +5,14 @@ import yaml
 import smtplib
 import dicttoxml
 
-from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session
-from flask_restx import ValidationError
+from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session, make_response
+from flask_restx import Resource, Api
 
 from backend.database import db
 from datetime import datetime
 from backend import lawsuit_model
 from backend import user_model
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask_swagger_ui import get_swaggerui_blueprint
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from utils import auth_required
@@ -23,27 +22,6 @@ from json_schema import inspection_schema
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_prefixed_env()
-SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
-API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
-
-# Call factory function to create our blueprint
-swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
-    API_URL,
-    config={  # Swagger UI config overrides
-        'app_name': "Test application"
-    },
-    # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
-    #    'clientId': "your-client-id",
-    #    'clientSecret': "your-client-secret-if-required",
-    #    'realm': "your-realms",
-    #    'appName': "your-app-name",
-    #    'scopeSeparator': " ",
-    #    'additionalQueryStringParams': {'test': "hello"}
-    # }
-)
-
-app.register_blueprint(swaggerui_blueprint)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{"/home/wallaby/IdeaProjects/Ville_Montreal/db/database.db"}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -53,14 +31,24 @@ app.config['SECRET_KEY'] = 'a21312mkldas23423oa'  # Set a secret key for the ses
 app.config['SESSION_TYPE'] = 'filesystem'  # Use filesystem-based session storage
 db.init_app(app)
 
+api = Api(app, doc="/api")
+
 with app.app_context():
     db.create_all()  # initialize the application with the DB schema.
 
 
-@app.route("/")
-def home():
-    return render_template("Frontend/index.html")
+@api.route("/")
+class Toot(Resource):
+    def get(self):
+        response = make_response(render_template("Frontend/index.html"))
+        response.headers["Content-Type"] = "text/html"
+        return response
+        # return render_template("Frontend/index.html")
 
+
+# @app.route("/")
+# def home():
+#     return render_template("Frontend/index.html")
 
 @app.route("/handle_search", methods=['GET', 'POST'])
 def handle_search():
