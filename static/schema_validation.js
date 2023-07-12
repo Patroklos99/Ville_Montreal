@@ -1,4 +1,3 @@
-
 const inspectionFormn = document.getElementById('inspection-form');
 inspectionFormn.addEventListener('submit', (event) => {
     debugger
@@ -13,28 +12,21 @@ inspectionFormn.addEventListener('submit', (event) => {
     const clientSurname = document.getElementById('client-surname').value;
     const description = document.getElementById('description').value;
 
-    // Construct the JSON payload
-    const data = {
-        etablissement: establishment,
-        adresse: address,
-        ville: city,
-        date_visite: visitDate,
-        client_nom: clientName,
-        client_prenom: clientSurname,
-        description_probleme: description
-    };
-    fetchInspectionData(data);
+
+    // Construct the URL with path parameters
+    const url = `/demande-inspection/${encodeURIComponent(establishment)}/${encodeURIComponent(address)}/${encodeURIComponent(city)}/${encodeURIComponent(visitDate)}/${encodeURIComponent(clientName)}/${encodeURIComponent(clientSurname)}/${encodeURIComponent(description)}`;
+
+    fetchInspectionData(url);
 });
 
-async function fetchInspectionData(data) {
+async function fetchInspectionData(url) {
     debugger
     try {
-        const response = await fetch('/demande-inspection', {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            }
         });
 
         if (response.ok) {

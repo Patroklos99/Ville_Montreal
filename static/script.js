@@ -116,20 +116,14 @@ function handleResponseData(responseData) {
 }
 
 async function fetchDataForDateRestaurant(date1, date2, selectedRestaurantValue) {
+    const url = `/contrevenants-restaurant/${date1}/${date2}/${selectedRestaurantValue}`;
     debugger
-    const requestData = {
-        date1: date1,
-        date2: date2,
-        restaurant: selectedRestaurantValue
-    };
-
     try {
-        const response = await fetch('/contrevenants-restaurant', {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
+            }
         });
 
         if (response.ok) {
@@ -215,12 +209,11 @@ async function fetchDeleteLawsuits(etablissement) {
 async function fetchLogin(data) {
     debugger
     try {
-        const response = await fetch(`/login`, {
-            method: 'POST',
+        const response = await fetch(`/login/${data.email}/${data.password}`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
         });
 
         // if (response.redirected) {

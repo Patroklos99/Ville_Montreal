@@ -5,7 +5,7 @@ async function fetchAddUsers(establishment) {
     try {
         const data = {};
 
-        const response = await fetch(`/user_establishments/${establishment}`, {
+        const response = await fetch(`/modify_user_establishments/${establishment}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ async function fetchDeleteUsers(establishment) {
     try {
         const data = {};
 
-        const response = await fetch(`/user_establishments/${establishment}`, {
+        const response = await fetch(`/modify_user_establishments/${establishment}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

@@ -50,7 +50,7 @@ function clearEstablishmentsDropdown() {
 async function fetchProfilePhoto() {
     debugger
     try {
-        const response = await fetch("/profile-photo-endpoint"); // Replace with your actual endpoint URL
+        const response = await fetch("/get_profile_photo"); // Replace with your actual endpoint URL
         if (response.ok) {
             const imageData = await response.json();
             const image = document.getElementById("uploaded-image");

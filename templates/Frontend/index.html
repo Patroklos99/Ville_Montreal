@@ -52,10 +52,10 @@
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter password">
         </div>
-        <div class="form-element">
+        <divRestaurant class="form-element">
             <input type="checkbox" id="remember-me">
             <labe for="remember-me">Remember me</labe>
-        </div>
+        </divRestaurant>
         <div class="form-element">
             <button id="signin-btn">Sign in</button>
         </div>
@@ -70,7 +70,7 @@
 
 
 <div class="container">
-    <form id="searchForm" method="POST" action="{{ url_for('handle_search') }}">
+    <form id="searchForm" method="GET" action="{{ url_for('handle_search') }}">
         <div class="search-option">
             <label for="search-criteria">Search by: </label>
             <select id="search-criteria" name="search-criteria">

@@ -4,6 +4,7 @@ import requests
 import yaml
 import smtplib
 import dicttoxml
+import json
 
 from flask import Flask, request, redirect, render_template, jsonify, Response, url_for, session, make_response
 from flask_restx import Resource, Api
@@ -37,25 +38,20 @@ with app.app_context():
     db.create_all()  # initialize the application with the DB schema.
 
 
-@api.route("/")
-class Toot(Resource):
+@api.route("/home")
+class Home(Resource):
     def get(self):
         response = make_response(render_template("Frontend/index.html"))
         response.headers["Content-Type"] = "text/html"
         return response
-        # return render_template("Frontend/index.html")
 
 
-# @app.route("/")
-# def home():
-#     return render_template("Frontend/index.html")
-
-@app.route("/handle_search", methods=['GET', 'POST'])
-def handle_search():
-    if request.method == 'POST':
+@api.route("/handle_search", methods=['GET'])
+class Handle_search(Resource):
+    def get(self):
         search_data = request
-        search_criteria = search_data.form.get('search-criteria')
-        search_input = search_data.form.get('search-input')
+        search_criteria = search_data.args.get('search-criteria')
+        search_input = search_data.args.get('search-input')
 
         if search_criteria == "establishment-name":
             return redirect(f"/etablissements/{search_input}")
@@ -64,30 +60,37 @@ def handle_search():
         elif search_criteria == "street-name":
             return redirect(f"/adresses/{search_input}")
         else:
-            return "Invalid search criteria"
+            return {"Invalid search criteria"}
 
 
 # Handle invalid search criteria
-@app.route("/etablissements/<etablissement>", methods=["GET"])
-def get_etablissements(etablissement):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
-    print(results)
-    return render_template("Frontend/results.html", results=results)
+@api.route("/etablissements/<string:etablissement>", methods=["GET"])
+class Etablissement(Resource):
+    def get(self, etablissement):
+        results = lawsuit_model.Lawsuit.query.filter(
+            lawsuit_model.Lawsuit.etablissement.ilike(f'%{etablissement}%')).all()
+        response = make_response(render_template("Frontend/results.html", results=results))
+        response.headers["Content-Type"] = "text/html"
+        return response
 
 
-@app.route("/proprietaires/<proprietaire>", methods=["GET"])
-def get_proprietaires(proprietaire):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
-    if results:
-        return render_template("Frontend/results.html", results=results)
-    else:
-        return render_template("not_found.html")
+@api.route("/proprietaires/<proprietaire>", methods=["GET"])
+class Proprietaires(Resource):
+    def get(self, proprietaire):
+        results = lawsuit_model.Lawsuit.query.filter(
+            lawsuit_model.Lawsuit.proprietaire.ilike(f'%{proprietaire}%')).all()
+        response = make_response(render_template("Frontend/results.html", results=results))
+        response.headers["Content-Type"] = "text/html"
+        return response
 
 
-@app.route("/adresses/<adresse>", methods=["GET"])
-def get_rues(adresse):
-    results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
-    return render_template("Frontend/results.html", results=results)
+@api.route("/adresses/<adresse>", methods=["GET"])
+class Rues(Resource):
+    def get(self, adresse):
+        results = lawsuit_model.Lawsuit.query.filter(lawsuit_model.Lawsuit.adresse.ilike(f'%{adresse}%')).all()
+        response = make_response(render_template("Frontend/results.html", results=results))
+        response.headers["Content-Type"] = "text/html"
+        return response
 
 
 @app.route("/contrevenants", methods=["GET", "POST"])
@@ -104,87 +107,91 @@ def get_contrevenants():
     return jsonify(result)
 
 
-@app.route("/contrevenants-restaurant", methods=["POST"])
-def get_contrevenants_restaurant():
-    date_debut = request.json.get("date1")
-    date_fin = request.json.get("date2")
-    restaurant = request.json.get("restaurant")
+@api.route("/contrevenants-restaurant/<date1>/<date2>/<restaurant>", methods=["GET"])
+class Contrevenants(Resource):
+    def get(self, date1, date2, restaurant):
+        # date_debut = request.args.get("date1")
+        # date_fin = request.args.get("date2")
+        # restaurant = request.args.get("restaurant")
 
-    # Filtrer les contraventions du restaurant entre les deux dates spécifiées
-    results = lawsuit_model.Lawsuit.query.filter(
-        lawsuit_model.Lawsuit.etablissement == restaurant,
-        lawsuit_model.Lawsuit.date.between(date_debut, date_fin)
-    ).all()
+        # Filtrer les contraventions du restaurant entre les deux dates spécifiées
+        results = lawsuit_model.Lawsuit.query.filter(
+            lawsuit_model.Lawsuit.etablissement == restaurant,
+            lawsuit_model.Lawsuit.date.between(date1, date2)
+        ).all()
 
-    # Obtenir uniquement les descriptions des contraventions
-    descriptions = [lawsuit.to_dict() for lawsuit in results]
+        # Obtenir uniquement les descriptions des contraventions
+        descriptions = [lawsuit.to_dict() for lawsuit in results]
 
-    return jsonify(descriptions)
+        return jsonify(descriptions)
 
 
 # Return all companies with atleast one infraction in desc order
-@app.route("/etablissements/infractions", methods=["GET"])
-def get_etablissements_infractions():
-    # Effectuer la requête pour obtenir la liste triée des établissements avec le nombre d'infractions
-    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
-                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
-        .group_by(lawsuit_model.Lawsuit.etablissement) \
-        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
-        .all()
+@api.route("/etablissements/infractionsJSON", methods=["GET"])
+class Infractions(Resource):
 
-    # Convertir les résultats en liste de dictionnaires
-    result = [{"etablissement": etablissement, "nombre_infractions": nombre_infractions} for
-              etablissement, nombre_infractions in results]
+    def get(self):
+        # Effectuer la requête pour obtenir la liste triée des établissements avec le nombre d'infractions
+        results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                                   db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+            .group_by(lawsuit_model.Lawsuit.etablissement) \
+            .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+            .all()
 
-    return jsonify(result)
+        # Convertir les résultats en liste de dictionnaires
+        result = [{"etablissement": etablissement, "nombre_infractions": nombre_infractions} for
+                  etablissement, nombre_infractions in results]
+
+        return jsonify(result)
 
 
 # Return all companies with at least one infraction in descending order
-@app.route("/etablissements/infractionsXML", methods=["GET"])
-def get_etablissements_infractions_xml():
-    # Perform the query to get the sorted list of establishments with the number of infractions
-    results = db.session.query(
-        lawsuit_model.Lawsuit.etablissement,
-        db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")
-    ).group_by(lawsuit_model.Lawsuit.etablissement).order_by(
-        db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()).all()
+@api.route("/etablissements/infractionsXML", methods=["GET"])
+class InfractionsXml(Resource):
+    def get(self):
+        # Perform the query to get the sorted list of establishments with the number of infractions
+        results = db.session.query(
+            lawsuit_model.Lawsuit.etablissement,
+            db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")
+        ).group_by(lawsuit_model.Lawsuit.etablissement).order_by(
+            db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()).all()
 
-    # Convert the results to a list of dictionaries
-    result = [
-        {"etablissement": etablissement, "nombre_infractions": nombre_infractions}
-        for etablissement, nombre_infractions in results
-    ]
+        # Convert the results to a list of dictionaries
+        result = [
+            {"etablissement": etablissement, "nombre_infractions": nombre_infractions}
+            for etablissement, nombre_infractions in results
+        ]
 
-    # Convert the result to XML format with UTF-8 encoding
-    xml_data = dicttoxml.dicttoxml(result, custom_root="etablissements", attr_type=False, encoding="utf-8")
+        # Convert the result to XML format with UTF-8 encoding
+        xml_data = dicttoxml.dicttoxml(result, custom_root="etablissements", attr_type=False, encoding="utf-8")
 
-    # Set the response content type as XML
-    response = Response(response=xml_data, status=200, mimetype="application/xml")
+        # Set the response content type as XML
+        response = Response(response=xml_data, status=200, mimetype="application/xml")
 
-    return response
+        return response
 
 
-@app.route("/etablissements/infractionsCSV", methods=["GET"])
-def get_etablissements_infractions_csv():
-    # Perform the query to get the sorted list of establishments with the number of infractions
-    results = db.session.query(lawsuit_model.Lawsuit.etablissement,
-                               db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
-        .group_by(lawsuit_model.Lawsuit.etablissement) \
-        .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
-        .all()
+@api.route("/etablissements/infractionsCSV", methods=["GET"])
+class InfractionsCSV(Resource):
+    def get(self):
+        # Perform the query to get the sorted list of establishments with the number of infractions
+        results = db.session.query(lawsuit_model.Lawsuit.etablissement,
+                                   db.func.count(lawsuit_model.Lawsuit.id_poursuite).label("nombre_infractions")) \
+            .group_by(lawsuit_model.Lawsuit.etablissement) \
+            .order_by(db.func.count(lawsuit_model.Lawsuit.id_poursuite).desc()) \
+            .all()
 
-    # Create the CSV content
-    csv_data = "etablissement,nombre_infractions\n"
-    for etablissement, nombre_infractions in results:
-        csv_data += f"{etablissement},{nombre_infractions}\n"
+        # Create the CSV content
+        csv_data = "etablissement,nombre_infractions\n"
+        for etablissement, nombre_infractions in results:
+            csv_data += f"{etablissement},{nombre_infractions}\n"
 
-    # Set the response headers
-    headers = {
-        "Content-Disposition": "attachment; filename=etablissements_infractions.csv",
-        "Content-Type": "text/csv; charset=utf-8"
-    }
+        # Create a response with the CSV data
+        response = make_response(csv_data)
 
-    return Response(csv_data, headers=headers)
+        # Set the content type header to indicate CSV
+        response.headers["Content-Type"] = "text/csv; charset=utf-8"
+        return response
 
 
 def job_schedule():
@@ -292,28 +299,30 @@ def get_email_recipient():
         return config['email']['recipient']
 
 
-# @app.route('/doc')
-# def documentation():
-#     # Read the RAML file and pass it to the template
-#     raml_f = "api_doc.raml"
-#     with open(raml_f, 'r') as raml_file:
-#         raml_content = raml_file.read()
-#     return render_template('Frontend/api_doc.html', raml_content=raml_content)
+@api.route(
+    "/demande-inspection/<string:establishment>/<string:address>/<string:city>/<string:visit_date>/<string"
+    ":client_name>/<string:client_surname>/<string:description>",
+    methods=["POST"])
+class DemandeInspection(Resource):
+    def post(self, establishment, address, city, visit_date, client_name, client_surname, description):
+        data = {
+            "etablissement": establishment,
+            "adresse": address,
+            "ville": city,
+            "date_visite": visit_date,
+            "client_nom": client_name,
+            "client_prenom": client_surname,
+            "description_probleme": description
+        }
 
+        # Validate the JSON data against the schema
+        try:
+            validate(data, inspection_schema)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
 
-@app.route("/demande-inspection", methods=["POST", "GET"])
-def create_inspection_request():
-    data = request.get_json()
-
-    # Validate the JSON data against the schema
-    try:
-        validate(data, inspection_schema)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-    # Process the inspection request and return a response (implementation logic)
-
-    return jsonify({"message": "Inspection request created successfully"})
+        # Process the inspection request and return a response (implementation logic)
+        return jsonify({"message": "Inspection request created successfully"})
 
 
 @app.route("/inspection-requests/<id>", methods=["DELETE"])
@@ -323,14 +332,15 @@ def delete_inspection_request(id):
     return jsonify({"message": f"Inspection request with ID {id} deleted successfully"})
 
 
-@app.route("/contrevenants/<string:etablissement>", methods=["PUT", "DELETE"])
-def update_or_delete_lawsuit(etablissement):
-    if request.method == "PUT":
-        return update_lawsuits(etablissement)
-    elif request.method == "DELETE":
-        return delete_lawsuits(etablissement)
-    else:
-        return jsonify({"message": "Method not allowed."}), 405
+@api.route("/contrevenants/<string:etablissement>", methods=["PUT", "DELETE"])
+class LawsuitsOperations(Resource):
+    def update_or_delete_lawsuit(self, etablissement):
+        if request.method == "PUT":
+            return update_lawsuits(etablissement)
+        elif request.method == "DELETE":
+            return delete_lawsuits(etablissement)
+        else:
+            return jsonify({"message": "Method not allowed."}), 405
 
 
 def update_lawsuits(etablissement):
@@ -367,31 +377,31 @@ def delete_lawsuits(etablissement):
         return jsonify({"message": f"Failed to delete lawsuits for establishment {etablissement}."}), 500
 
 
-@app.route("/user")
-def get_user():
-    email = session.get('email')
-    user = user_model.User.query.filter_by(email=email).first()
-    establishments = user.establishments.split(",") if user.establishments else []
-    timestamp = int(datetime.now().timestamp())
-    return render_template("Frontend/user.html", user=user, establishments=establishments, timestamp=timestamp)
+@api.route("/user")
+class User(Resource):
+    def get(self):
+        email = session.get('email')
+        user = user_model.User.query.filter_by(email=email).first()
+        establishments = user.establishments.split(",") if user.establishments else []
+        response = make_response(render_template("Frontend/user.html", user=user, establishments=establishments))
+        response.headers["Content-Type"] = "text/html"
+        return response
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    user = user_model.User.query.filter_by(email=email).first()
+@api.route("/login/<string:email>/<string:password>", methods=["GET"])
+class Login(Resource):
+    def get(self, email, password):
+        user = user_model.User.query.filter_by(email=email).first()
 
-    if user and user.password == password:
-        # return jsonify({"message": "You have successfully logged in"})
-        session['email'] = email  # Set the email in the session
-        return redirect(url_for("get_user"))
-    else:
-        return jsonify({"error": f"Invalid email or password"}), 400
+        if user and user.password == password:
+            # return jsonify({"message": "You have successfully logged in"})
+            session['email'] = email  # Set the email in the session
+            return redirect(url_for("user"))
+        else:
+            return jsonify({"error": f"Invalid email or password"}), 400
 
 
-@app.route("/users/create", methods=['POST'])
+@app.route("/users/create", methods=['POST'])  ###here
 def create_user():
     data = request.get_json()
 
@@ -420,14 +430,24 @@ def create_user():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route("/establishments")
-def get_establishments():
-    establishments = lawsuit_model.Lawsuit.query.with_entities(lawsuit_model.Lawsuit.etablissement).distinct().all()
-    establishment_names = [est[0] for est in establishments]
-    return jsonify({"establishments": establishment_names})
+@api.route("/establishments")
+class EstablishmentsAll(Resource):
+    def get(self):
+        establishments = lawsuit_model.Lawsuit.query.with_entities(lawsuit_model.Lawsuit.etablissement).distinct().all()
+        establishment_names = [est[0] for est in establishments]
+        return jsonify({"establishments": establishment_names})
 
 
-@app.route("/user_establishments/<string:etablissement>", methods=["POST", "DELETE"])
+# @api.route("/modify_user_establishments/<string:etablissement>", methods=["POST", "DELETE"])
+# class ModifyUserEstablishments(Resource):
+#     def post(self, etablissement):
+#         return add_establishment(etablissement)
+#
+#     def delete(self, etablissement):
+#         return delete_establishment(etablissement)
+
+
+@app.route("/modify_user_establishments/<string:etablissement>", methods=["POST", "DELETE"])
 def update_or_delete_establishment(etablissement):
     if request.method == "POST":
         return add_establishment(etablissement)
@@ -494,8 +514,6 @@ def upload_photo():
 
     if file:
         file_data = file.read()
-
-        # Check if the user already has a profile photo
         user = user_model.User.query.filter_by(email=email).first()
 
         # Update the user's profile photo in the database
@@ -512,7 +530,7 @@ def upload_photo():
         return jsonify({"error": "No file received."}), 400
 
 
-@app.route('/profile-photo-endpoint')
+@app.route('/get_profile_photo')
 def get_profile_photo():
     email = session.get("email")
     user = user_model.User.query.filter_by(email=email).first()
