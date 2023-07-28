@@ -16,12 +16,14 @@ from backend import user_model
 from apscheduler.schedulers.background import BackgroundScheduler
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from flask_cors import CORS
 from utils import auth_required
 
 from jsonschema import validate
 from json_schema import inspection_schema
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+CORS(app)
 app.config.from_prefixed_env()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{"/home/wallaby/IdeaProjects/Ville_Montreal/db/database.db"}'
