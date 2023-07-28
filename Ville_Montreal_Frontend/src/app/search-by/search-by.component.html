@@ -1,5 +1,5 @@
 <div class="container">
-    <form id="searchForm" method="GET" action="{{ url_for('handle_search') }}">
+    <form id="searchForm" method="GET" action="http://127.0.0.1:5000/home/handle_search">
         <div class="search-option">
             <label for="search-criteria">Search by: </label>
             <select id="search-criteria" name="search-criteria">
@@ -13,7 +13,7 @@
     </form>
 
     <button id="show-login">Login</button>
-    <div clas="button-container">
+    <div class="button-container">
         <button id="displayFormBtn">Display Form</button>
         <button id="inspectionFormBtn">Inspection Form</button>
     </div>

@@ -29,6 +29,7 @@ body {
     justify-content: center;
 
 }
+
 .form-container {
     display: flex;
     justify-content: center;
@@ -45,7 +46,8 @@ body {
 #inspectionFormBtn {
     flex: 1;
     font-size: 18px;
-    padding: 10px 20px;
+    padding: 10px 19px;
+    white-space: nowrap;
 }
 
 #lawsuits {
@@ -345,6 +347,7 @@ scale(1);
 #establishments-signup::selection {
     width: 100%;
 }
+
 #establishments-input-user {
     font-size: 18px;
 }
