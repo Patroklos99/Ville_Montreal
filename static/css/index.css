@@ -38,14 +38,14 @@ body {
 
 .button-container {
     display: flex;
-    gap: 10px; /* Add gap between the buttons */
+    gap: 10px;
 }
 
 #displayFormBtn,
 #inspectionFormBtn {
-    flex: 1; /* Make the buttons share equal width */
-    font-size: 18px; /* Increase the font size */
-    padding: 10px 20px; /* Add padding to increase button size */
+    flex: 1;
+    font-size: 18px;
+    padding: 10px 20px;
 }
 
 #lawsuits {
@@ -138,10 +138,6 @@ hr {
     padding: 40px;
 }
 
-/*.center {*/
-
-/*}*/
-
 #show-login {
     position: fixed;
     right: 200px;
@@ -230,8 +226,8 @@ scale(1);
     transform 200ms ease-in-out 0ms;
 }
 
-.popup .close-btn, .popup-signup .close-btn,
-.popup-signup .close-btn, .popup-signup .close-btn {
+.popup .close-btn,
+.popup-signup .close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -245,16 +241,16 @@ scale(1);
     cursor: pointer;
 }
 
-.popup .login-form h2, .popup-signup .login-form h2,
-.popup-signup .login-form h2, .popup-signup .login-form h2 {
+.popup .login-form h2,
+.popup-signup .login-form h2 {
     text-align: center;
     color: #222;
     margin: 10px 0px 20px;
     font-size: 25px;
 }
 
-.popup .login-form .form-element, .popup-signup .login-form .form-element,
-.popup-signup .login-form .form-element, .popup-signup .login-form .form-element {
+.popup .login-form .form-element,
+.popup-signup .login-form .form-element {
     margin: 15px 0px;
 }
 
@@ -280,8 +276,8 @@ scale(1);
     margin-right: 5px;
 }
 
-.popup .login-form .form-element button, .popup-signup .login-form .form-element button,
-.popup-signup .login-form .form-element button, .popup-signup .login-form .form-element button {
+.popup .login-form .form-element button,
+.popup-signup .login-form .form-element button {
     width: 100%;
     height: 40px;
     border: none;
@@ -293,8 +289,8 @@ scale(1);
     cursor: pointer;
 }
 
-.popup .login-form .form-element a, .popup-signup .login-form .form-element a,
-.popup-signup .login-form .form-element a, .popup-signup .login-form .form-element a {
+.popup .login-form .form-element a,
+.popup-signup .login-form .form-element a {
     display: block;
     text-align: right;
     font-size: 15px;
@@ -317,12 +313,12 @@ scale(1);
 
 .modify-user {
     margin-left: 10px;
-    padding: 8px 16px; /* Increase the padding to adjust the button size */
-    font-size: 16px; /* Increase the font size */
+    padding: 8px 16px;
+    font-size: 16px;
 }
 
 .form-element label {
-    margin-right: 10px; /* Add margin-right to create space between label and input */
+    margin-right: 10px;
     font-size: 18px;
 }
 
@@ -354,8 +350,8 @@ scale(1);
 }
 
 #applyButton-user {
-    padding: 8px 16px; /* Increase the padding to adjust the button size */
-    font-size: 16px; /* Increase the font size */
+    padding: 8px 16px;
+    font-size: 16px;
 }
 
 #profile-photo {
@@ -364,10 +360,10 @@ scale(1);
 
 
 #upload-button {
-    padding: 10px 20px; /* Adjust the padding as per your requirements */
-    font-size: 16px; /* Adjust the font size as per your requirements */
-    background-color: #4CAF50; /* Adjust the background color as per your requirements */
-    color: white; /* Adjust the text color as per your requirements */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -377,8 +373,8 @@ scale(1);
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px; /* Adjust the width as per your requirements */
-    margin-bottom: 10px; /* Adjust the margin as per your requirements */
+    width: 300px;
+    margin-bottom: 10px;
 }
 
 .image-container {
