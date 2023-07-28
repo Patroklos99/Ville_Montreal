@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  background: linear-gradient(to right, #3a7bd5, #3a6073);
+  font-family: "Raleway", sans-serif;
+}
+
+#lawsuits {
+  text-align: center;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  margin-left: 10px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 1px;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
