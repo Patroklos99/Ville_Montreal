@@ -2,14 +2,14 @@ let lastForm = "";
 document.querySelector("#show-login").addEventListener("click", function () {
     debugger
     document.querySelector(".popup").classList.add("active");
-    if (document.querySelector("#hiddenForm").style.display === "block") {
-        lastForm = "hiddenForm";
+    if (document.querySelector("#quickSearchForm").style.display === "block") {
+        lastForm = "quickSearchForm";
     } else if (document.querySelector("#inspection-form").style.display === "block") {
         lastForm = "inspection-form"
     } else {
         lastForm = ""
     }
-    document.querySelector("#hiddenForm").style.display = "none";
+    document.querySelector("#quickSearchForm").style.display = "none";
     document.querySelector("#inspection-form").style.display = "none"; // Hide the inspection form
 
 });
@@ -18,7 +18,7 @@ document.querySelector("#show-signup").addEventListener("click", function () {
     debugger
     document.querySelector(".popup-signup").classList.add("active");
     document.querySelector(".popup").classList.remove("active");
-    document.querySelector("#hiddenForm").style.display = "none";
+    document.querySelector("#quickSearchForm").style.display = "none";
     document.querySelector("#inspection-form").style.display = "none"; // Hide the inspection form
 });
 
@@ -40,12 +40,12 @@ document.querySelector(".popup-signup .close-btn").addEventListener("click", fun
 
 function showLastForm(lastform) {
     debugger
-    if (lastform === "hiddenForm") {
-        document.querySelector("#hiddenForm").style.display = "block";
+    if (lastform === "quickSearchForm") {
+        document.querySelector("#quickSearchForm").style.display = "block";
         document.querySelector("#inspection-form").style.display = "none"; // hide the inspection form
     } else if (lastform === "inspection-form"){
         document.querySelector("#inspection-form").style.display = "block"; // hide the inspection form
-        document.querySelector("#hiddenForm").style.display = "none";
+        document.querySelector("#quickSearchForm").style.display = "none";
     }
 }
 
@@ -270,7 +270,7 @@ const resultsTable = document.getElementById('resultsTable');
 const restaurantList = document.getElementById('restaurant-list');
 const applyButton = document.getElementById("applyButton");
 const displayFormButton = document.getElementById('displayFormBtn');
-const hiddenForm = document.getElementById('hiddenForm');
+const quickSearchForm = document.getElementById('quickSearchForm');
 const signinButton = document.getElementById('signin-btn')
 const signupButton = document.getElementById('signup-button')
 const inspectionRequestButton = document.getElementById("inspectionFormBtn");
@@ -386,18 +386,18 @@ function modifyLogin(status) {
 }
 
 displayFormButton.addEventListener('click', () => {
-    if (hiddenForm.style.display === 'none' || hiddenForm.style.display === '') {
-        hiddenForm.style.display = 'block';
+    if (quickSearchForm.style.display === 'none' || quickSearchForm.style.display === '') {
+        quickSearchForm.style.display = 'block';
         inspectionForm.style.display = 'none'; // Hide the inspection form
     } else {
-        hiddenForm.style.display = 'none';
+        quickSearchForm.style.display = 'none';
     }
 });
 
 inspectionRequestButton.addEventListener("click", function () {
     if (inspectionForm.style.display === "none") {
         inspectionForm.style.display = "block";
-        hiddenForm.style.display = 'none'; // Hide the display form
+        quickSearchForm.style.display = 'none'; // Hide the display form
     } else {
         inspectionForm.style.display = "none";
     }

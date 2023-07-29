@@ -16,7 +16,7 @@ body {
     margin-bottom: 20px;
 }
 
-#hiddenForm {
+#quickSearchForm {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
@@ -27,7 +27,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
 }
 
 .form-container {
@@ -399,4 +398,11 @@ scale(1);
     border: 2px solid #ccc;
     border-radius: 4px;
     padding: 2px;
+}
+
+#date1, #date2, #restaurant-list {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
