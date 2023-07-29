@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SearchByComponent } from './search-by/search-by.component';
+import { QuickSearchComponent } from './quick-search/quick-search.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SignUpComponent,
-    SearchByComponent
+    SearchByComponent,
+    QuickSearchComponent
   ],
   imports: [
     BrowserModule,

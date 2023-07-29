@@ -1,21 +1,22 @@
 <div class="container">
-    <form id="searchForm" method="GET" action="http://127.0.0.1:5000/home/handle_search">
-        <div class="search-option">
-            <label for="search-criteria">Search by: </label>
-            <select id="search-criteria" name="search-criteria">
-                <option value="establishment-name">Establishment Name</option>
-                <option value="owner-name">Owner Name</option>
-                <option value="street-name">Street Name</option>
-            </select>
-            <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
-            <button type="submit">Search</button>
-        </div>
-    </form>
-
-    <button id="show-login">Login</button>
-    <div class="button-container">
-        <button id="displayFormBtn">Display Form</button>
-        <button id="inspectionFormBtn">Inspection Form</button>
+  <form id="searchForm" method="GET" action="http://127.0.0.1:5000/home/handle_search">
+    <div class="search-option">
+      <label for="search-criteria">Search by: </label>
+      <select id="search-criteria" name="search-criteria">
+        <option value="establishment-name">Establishment Name</option>
+        <option value="owner-name">Owner Name</option>
+        <option value="street-name">Street Name</option>
+      </select>
+      <input type="text" id="search-input" name="search-input" placeholder="Enter search term">
+      <button type="submit">Search</button>
     </div>
+  </form>
+
+  <button id="show-login">Login</button>
+  <div class="button-container">
+    <button id="displayFormBtn" (click)="onDisplayFormButtonClick()">Display Form</button>
+    <button id="inspectionFormBtn" (click)="onCloseQuickSearchForm()">Inspection Form</button>
+  </div>
 </div>
 <div id="resultsContainer"></div>
+<app-quick-search [showQuickSearchForm]="showQuickSearchForm" (closeQuickSearchForm)="onCloseQuickSearchForm()"></app-quick-search>
