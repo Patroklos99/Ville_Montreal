@@ -1,0 +1,56 @@
+#quickSearchForm {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#searchTitle {
+  text-align: center;
+}
+
+.closeButton {
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#parentContainer {
+  display: block;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.rolling-list {
+  overflow: auto;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+.search-option-rechercher {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 15px;
+}
+
+.dm-criteria {
+  display: none;
+  align-items: center;
+}
+
+#resultsTable {
+  padding: 40px;
+}
+
+#date1, #date2, #restaurant-list {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
