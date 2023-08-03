@@ -6,15 +6,29 @@ import {Component} from '@angular/core';
   styleUrls: ['./search-by.component.css']
 })
 export class SearchByComponent {
-  showQuickSearchForm = false;
+  showQuickSearchForm: boolean = false;
+  showInspectionForm: boolean = false;
 
-  onDisplayFormButtonClick() {
-    // Show the quick search form
-    this.showQuickSearchForm = !this.showQuickSearchForm;
+  onDisplayQuickSearchForm() {
+    // If QuickSearchForm is already shown, hide it.
+    if (this.showQuickSearchForm) {
+      this.showQuickSearchForm = false;
+    } else {
+      // Else, show QuickSearchForm and hide InspectionForm.
+      this.showQuickSearchForm = true;
+      this.showInspectionForm = false;
+    }
   }
 
-  onCloseQuickSearchForm() {
-    // Close the quick search form
-    this.showQuickSearchForm = false;
+  onDisplayInspectionForm(): void {
+    // If InspectionForm is already shown, hide it.
+    if (this.showInspectionForm) {
+      this.showInspectionForm = false;
+    } else {
+      // Else, show InspectionForm and hide QuickSearchForm.
+      this.showInspectionForm = true;
+      this.showQuickSearchForm = false;
+    }
   }
+
 }

@@ -6,13 +6,14 @@ import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SearchByComponent } from './search-by/search-by.component';
 import { QuickSearchComponent } from './quick-search/quick-search.component';
-
+import { InspectionComponent } from './inspection/inspection.component';
 @NgModule({
   declarations: [
     AppComponent,
     SignUpComponent,
     SearchByComponent,
-    QuickSearchComponent
+    QuickSearchComponent,
+    InspectionComponent
   ],
   imports: [
     BrowserModule,
