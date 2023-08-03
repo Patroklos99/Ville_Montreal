@@ -41,7 +41,7 @@ body {
     gap: 10px;
 }
 
-#displayFormBtn,
+#quickSearchFormBtn,
 #inspectionFormBtn {
     flex: 1;
     font-size: 18px;
