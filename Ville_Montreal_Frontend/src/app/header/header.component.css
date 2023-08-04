@@ -1,0 +1,9 @@
+.navbar {
+  /*padding: 28px;*/
+  background-color: #343a40 !important;
+}
+
+.container-fluid {
+  margin-top: 40px;
+  max-width: 1140px;
+}
